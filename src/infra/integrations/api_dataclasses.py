@@ -1,14 +1,16 @@
 from dataclasses import dataclass
 
 @dataclass
-class Lichess():
-    bullet: dict
-    blitz: dict 
-    rapid: dict
-    classical: dict
+class LichessData:
+    
+    bullet: int | None = None
+    blitz: int | None =  None
+    rapid: int | None = None
+    classical: int | None = None
 
 @dataclass
-class Chesscom():
-    chess_blitz: dict
-    chess_rapid: dict
-    chess_bullet: dict
+class ChesscomData:
+    
+    chess_blitz: int | None = None
+    chess_rapid: int | None = None
+    chess_bullet: int | None = None
