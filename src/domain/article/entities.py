@@ -1,0 +1,62 @@
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Any, Self
+
+from src.domain.base import Entity, datetime_factory
+
+
+@dataclass
+class Article(Entity):
+    title: str
+    content: dict[str, Any]
+    category_id: str
+    preview: str | None = None
+    pud_date: datetime = field(default_factory=datetime_factory)
+    views: int = 0
+
+    @classmethod
+    def create(
+        cls,
+        id: str,
+        content: dict[str, Any],
+        author_id: str,
+        category_id: str,
+        preview: str | None = None,
+    ) -> Self:
+        inst = cls(id)
+        inst.title = content["title"]  # raise title not found
+        inst.content = content
+        inst.author_id = author_id
+        inst.category_id = category_id
+        inst.preview = preview
+        inst.views = 0
+        inst.pud_date = datetime.utcnow()
+        return inst
+
+
+@dataclass
+class Category(Entity):
+    name: str
+
+
+@dataclass
+class Tag(Entity):
+    name: str
+
+
+@dataclass
+class ArticleTag:
+    tag_id: str
+    article_id: str
+
+
+class Reaction(Enum):
+    DISLIKE = -1
+    LIKE = 1
+
+
+@dataclass
+class ArticleReaction(Entity):
+    article_id: str
+    reaction: Reaction
