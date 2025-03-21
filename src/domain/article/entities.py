@@ -44,6 +44,16 @@ class Category(Entity):
 class Tag(Entity):
     name: str
 
+    @classmethod
+    def create(
+        cls,
+        id: str,
+        name: str,
+    ) -> Self:
+        inst = cls(id)
+        inst.name = name
+        return inst
+
 
 @dataclass
 class ArticleTag:

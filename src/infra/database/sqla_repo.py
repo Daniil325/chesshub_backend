@@ -9,7 +9,7 @@ T = TypeVar("T")
 
 class SqlHelper[T]:
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     @staticmethod
@@ -39,3 +39,9 @@ class SqlHelper[T]:
         stmt = delete(T).where(T.id == id)
         await self.session.execute(stmt)
         await self.session.commit()
+
+
+class TagRepo(SqlHelper):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
