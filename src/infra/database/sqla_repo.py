@@ -45,3 +45,18 @@ class TagRepo(SqlHelper):
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session)
+
+class CategoryRepo(SqlHelper):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
+
+class ArticleTagRepo(SqlHelper):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
+
+class ArticalReactionRepo(SqlHelper):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
