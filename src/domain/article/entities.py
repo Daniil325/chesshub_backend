@@ -39,6 +39,16 @@ class Article(Entity):
 class Category(Entity):
     name: str
 
+    @classmethod
+    def create(
+        cls,
+        id: str,
+        name: str,
+    ) -> Self:
+        inst = cls(id)
+        inst.name = name
+        return inst
+    
 
 @dataclass
 class Tag(Entity):
@@ -60,6 +70,17 @@ class ArticleTag:
     tag_id: str
     article_id: str
 
+    @classmethod
+    def create(
+        cls,
+        tag_id: str,
+        article_id: str,
+    ) -> Self:
+        inst = cls(tag_id, article_id)
+        inst.tag_id = tag_id
+        inst.article_id = tag_id
+        return inst
+
 
 class Reaction(Enum):
     DISLIKE = -1
@@ -70,3 +91,14 @@ class Reaction(Enum):
 class ArticleReaction(Entity):
     article_id: str
     reaction: Reaction
+
+    @classmethod
+    def create(
+        cls,
+        id: str,
+        article_id: str,
+        reaction: Reaction
+    ) -> Self:
+        inst = cls(article_id, reaction)
+        inst.id = id
+        return inst
