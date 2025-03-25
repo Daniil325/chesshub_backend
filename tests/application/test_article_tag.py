@@ -11,6 +11,6 @@ async def test_create_article_tag(mocker):
 
     sut = CreateArticleTagCommand(article_tag_repo)
 
-    result = await sut(CreateArticleTagDto("ауууу", "писятдва"))
+    result = await sut(CreateArticleTagDto("NEW-ID", "NEW_ID_2"))
 
-    assert result == "NEW-ID"
+    assert result == ("NEW-ID", "NEW_ID_2")

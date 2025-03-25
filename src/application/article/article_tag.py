@@ -14,9 +14,7 @@ class CreateArticleTagDto:
 class CreateArticleTagCommand:
     article_tag_repo: ArticleTagRepo
 
-    async def __call__(self, dto: CreateArticleTagDto) -> str:
-        tag_id = self.article_tag_repo.new_id()
-        article_id = self.article_tag_repo.new_id()
-        article_tag = ArticleTag.create(tag_id, article_id)
+    async def __call__(self, dto: CreateArticleTagDto) -> tuple:
+        article_tag = ArticleTag.create(dto.tag_id, dto.article_id)
         await self.article_tag_repo.create(article_tag)
-        return tag_id
+        return (dto.tag_id, dto.article_id)
