@@ -18,3 +18,28 @@ class CreateTagCommand:
         tag = Tag.create(identity, dto.name)
         await self.tag_repo.create(tag)
         return identity
+
+
+@dataclass(frozen=True)
+class UpdateTagDto:
+    tag_id: str
+    name: str
+
+
+@dataclass
+class UpdateTagCommand:
+    tag_repo: TagRepo
+
+    async def __call__(self, dto: UpdateTagDto) -> str:
+        tag = await self.tag_repo.get(dto.tag_id)
+        tag.name = dto.name
+        await self.tag_repo.update(dto.tag_id, tag)
+
+
+@dataclass
+class DeleteTagCommand:
+    tag_repo: TagRepo
+
+    async def __call__(self, content_id: str) -> None:
+        await self.tag_repo.delete(content_id)
+        return content_id

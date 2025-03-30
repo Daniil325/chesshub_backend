@@ -48,7 +48,7 @@ class Category(Entity):
         inst = cls(id)
         inst.name = name
         return inst
-    
+
 
 @dataclass
 class Tag(Entity):
@@ -93,12 +93,7 @@ class ArticleReaction(Entity):
     reaction: Reaction
 
     @classmethod
-    def create(
-        cls,
-        id: str,
-        article_id: str,
-        reaction: Reaction
-    ) -> Self:
+    def create(cls, id: str, article_id: str, reaction: Reaction) -> Self:
         inst = cls(article_id, reaction)
         inst.id = id
         return inst
