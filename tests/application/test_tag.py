@@ -8,7 +8,7 @@ from src.application.article.tag import (
     UpdateTagCommand,
     UpdateTagDto,
 )
-from src.infra.database.sqla_repo import TagRepo
+from src.domain.article.protocols import TagRepo
 
 
 @pytest.mark.unit
