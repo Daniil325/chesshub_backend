@@ -1,8 +1,8 @@
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.article.protocols import TagRepo
-from src.infra.database.sqla_repo import SqlTagRepo
+from src.domain.article.protocols import ArticleRepo, TagRepo
+from src.infra.database.sqla_repo import SqlArticleRepo, SqlTagRepo
 
 
 class SqlProvider(Provider):
@@ -15,3 +15,7 @@ class SqlProvider(Provider):
     @provide
     def get_content_repo(self) -> TagRepo:
         return SqlTagRepo(self.session)
+
+    @provide
+    def get_article_repo(self) -> ArticleRepo:
+        return SqlArticleRepo(self.session)
