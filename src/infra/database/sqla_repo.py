@@ -4,7 +4,8 @@ from uuid import UUID, uuid4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.article.protocols import TagRepo
+from src.domain.article.entities import Article
+from src.domain.article.protocols import ArticleRepo, TagRepo
 
 T = TypeVar("T")
 
@@ -69,3 +70,17 @@ class SqlArticleReactionRepo(SqlHelper):
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session)
+
+
+class SqlArticleRepo(SqlHelper, ArticleRepo):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
+
+    async def get_by_category(self, category_id: str) -> list[Article]:
+        stmt = select(T).where(T.category_id == category_id)
+        return (await self.session.execute(stmt)).scalars()
+
+    async def get_by_author(self, author_id: str) -> list[Article]:
+        stmt = select(T).where(T.author_id == author_id)
+        return (await self.session.execute(stmt)).scalars()
