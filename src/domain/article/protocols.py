@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from src.domain.article.entities import (
+    Article,
     Tag,
     ArticleReaction,
     ArticleTag,
