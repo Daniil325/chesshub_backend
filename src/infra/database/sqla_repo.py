@@ -4,6 +4,8 @@ from uuid import UUID, uuid4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.domain.article.protocols import TagRepo
+
 T = TypeVar("T")
 
 
@@ -26,11 +28,15 @@ class SqlHelper[T]:
         return (await self.session.execute(stmt)).scalar_one_or_none()
 
     async def create(self, item: T) -> None:
-        self.session.add(item)
-        await self.session.commit()
-        await self.session.refresh(item)
+        try:
+            self.session.add(item)
+            await self.session.commit()
+            await self.session.refresh(item)
+        except Exception:
+            await self.session.rollback()
+            raise
 
-    async def update(self, changes: dict[str, Any], id: UUID) -> None:
+    async def update(self, id: UUID, changes: dict[str, Any]) -> None:
         stmt = update(T).where(T.id == id).values(**changes)
         await self.session.execute(stmt)
         await self.session.commit()
@@ -41,7 +47,25 @@ class SqlHelper[T]:
         await self.session.commit()
 
 
-class TagRepo(SqlHelper):
+class SqlTagRepo(SqlHelper, TagRepo):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
+
+
+class SqlCategoryRepo(SqlHelper):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
+
+
+class SqlArticleTagRepo(SqlHelper):
+
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session)
+
+
+class SqlArticleReactionRepo(SqlHelper):
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session)
