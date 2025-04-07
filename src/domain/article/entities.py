@@ -19,15 +19,14 @@ class Article(Entity):
     def create(
         cls,
         id: str,
+        title: str,
         content: dict[str, Any],
-        author_id: str,
         category_id: str,
         preview: str | None = None,
     ) -> Self:
-        inst = cls(id)
-        inst.title = content["title"]  # raise title not found
+        inst = cls(id, title, content, category_id, preview)
+        inst.title = title
         inst.content = content
-        inst.author_id = author_id
         inst.category_id = category_id
         inst.preview = preview
         inst.views = 0

@@ -13,7 +13,7 @@ article_table = Table(
     Column("id", Uuid, primary_key=True),
     Column("title", String, nullable=False),
     Column("content", JSON),
-    Column("preview", Uuid),
+    Column("preview", String),
     Column("category_id", Uuid, ForeignKey("category.id")),
     Column("pub_date", DateTime, nullable=False),
     Column("views", Integer, nullable=False, default=0),
