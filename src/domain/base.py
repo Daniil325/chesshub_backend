@@ -5,7 +5,7 @@ from uuid import uuid4
 
 @dataclass
 class Entity:
-    id: str = field(default_factory=lambda: str(uuid4), kw_only=True)
+    id: str = field(default_factory=uuid4, kw_only=True)
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Entity):
@@ -15,3 +15,13 @@ class Entity:
 
 def datetime_factory():
     return datetime.now(tz=UTC)
+
+
+class Singleton:
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance

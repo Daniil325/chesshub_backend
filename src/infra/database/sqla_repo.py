@@ -28,7 +28,7 @@ class SqlHelper[T]:
         stmt = select(T).where(T.id == id)
         return (await self.session.execute(stmt)).scalar_one_or_none()
 
-    async def create(self, item: T) -> None:
+    async def add(self, item: T) -> None:
         try:
             self.session.add(item)
             await self.session.commit()

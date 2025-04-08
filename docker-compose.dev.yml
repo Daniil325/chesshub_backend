@@ -1,4 +1,21 @@
+version: "3.9"
 services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: chesshub_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5252:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
   minio:
     image: minio/minio:RELEASE.2023-11-20T22-40-07Z.fips
     command: server --console-address ":9001" /data
@@ -11,5 +28,22 @@ services:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
 
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: chesshub_backend
+    ports:
+      - '8000:8000'
+    networks:
+      - net
+    restart: always
+    depends_on:
+      - postgres
+
 volumes:
   minio_data:
+  pgdata:
+
+networks:
+  net:

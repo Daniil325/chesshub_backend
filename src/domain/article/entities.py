@@ -12,7 +12,7 @@ class Article(Entity):
     content: dict[str, Any]
     category_id: str
     preview: str | None = None
-    pud_date: datetime = field(default_factory=datetime_factory)
+    pub_date: datetime = field(default_factory=datetime_factory)
     views: int = 0
 
     @classmethod
@@ -30,7 +30,7 @@ class Article(Entity):
         inst.category_id = category_id
         inst.preview = preview
         inst.views = 0
-        inst.pud_date = datetime.utcnow()
+        inst.pub_date = datetime.utcnow()
         return inst
 
 

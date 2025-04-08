@@ -15,7 +15,9 @@ class CreateTagCommand:
 
     async def __call__(self, dto: CreateTagDto) -> str:
         identity = self.tag_repo.new_id()
+        print("rrrrrrrrrr", identity)
         tag = Tag.create(identity, dto.name)
+        print("fffffffffff", tag)
         await self.tag_repo.add(tag)
         return identity
 
