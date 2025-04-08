@@ -1,7 +1,13 @@
 from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
-from sqlalchemy.orm import registry, relationship
+from sqlalchemy.orm import registry
 
-from src.domain.article.entities import Article, ArticleReaction, ArticleTag, Category, Tag
+from src.domain.article.entities import (
+    Article,
+    ArticleReaction,
+    ArticleTag,
+    Category,
+    Tag,
+)
 
 
 mapper_registry = registry()
@@ -13,8 +19,8 @@ article_table = Table(
     Column("id", Uuid, primary_key=True),
     Column("title", String, nullable=False),
     Column("content", JSON),
-    Column("preview", Uuid),
     Column("category_id", Uuid, ForeignKey("category.id")),
+    Column("preview", String),
     Column("pub_date", DateTime, nullable=False),
     Column("views", Integer, nullable=False, default=0),
 )
@@ -48,23 +54,8 @@ article_reaction_table = Table(
     Column("reaction", Integer, nullable=False),
 )
 
+mapper_registry.map_imperatively(Tag, tag_table)
+mapper_registry.map_imperatively(Article, article_table)
+mapper_registry.map_imperatively(Category, category_table)
 mapper_registry.map_imperatively(ArticleReaction, article_reaction_table)
 mapper_registry.map_imperatively(ArticleTag, article_tag_table)
-mapper_registry.map_imperatively(
-    Category,
-    category_table,
-    properties={
-        "articles": relationship(Article)
-    }
-)
-mapper_registry.map_imperatively(
-    Tag,
-    tag_table,
-    properties={"articles": relationship(ArticleTag)}
-)
-mapper_registry.map_imperatively(
-    Article, article_table, properties={
-        "tags": relationship(ArticleTag),
-        "reactions": relationship(ArticleReaction)
-    }
-)

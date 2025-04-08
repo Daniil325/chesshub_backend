@@ -12,26 +12,25 @@ class Article(Entity):
     content: dict[str, Any]
     category_id: str
     preview: str | None = None
-    pud_date: datetime = field(default_factory=datetime_factory)
+    pub_date: datetime = field(default_factory=datetime_factory)
     views: int = 0
 
     @classmethod
     def create(
         cls,
         id: str,
+        title: str,
         content: dict[str, Any],
-        author_id: str,
         category_id: str,
         preview: str | None = None,
     ) -> Self:
-        inst = cls(id)
-        inst.title = content["title"]  # raise title not found
+        inst = cls(id, title, content, category_id, preview)
+        inst.title = title
         inst.content = content
-        inst.author_id = author_id
         inst.category_id = category_id
         inst.preview = preview
         inst.views = 0
-        inst.pud_date = datetime.utcnow()
+        inst.pub_date = datetime.utcnow()
         return inst
 
 

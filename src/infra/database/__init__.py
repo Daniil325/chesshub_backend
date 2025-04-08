@@ -1,21 +1,41 @@
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.article.protocols import ArticleRepo, TagRepo
-from src.infra.database.sqla_repo import SqlArticleRepo, SqlTagRepo
+from src.infra.database.session import DBSession
+from src.domain.article.protocols import ArticleRepo, CategoryRepo, TagRepo
+from src.infra.database.sqla_repo import SqlArticleRepo, SqlCategoryRepo, SqlTagRepo
+
+
+class DBSessionProvider(Provider):
+    scope = Scope.REQUEST
+
+    def __init__(self, settings):
+        super().__init__()
+        self.settings = settings
+
+    @provide
+    def get_db(self) -> DBSession:
+        return DBSession(self.settings)
+
+    @provide
+    async def get_session(self, db: DBSession) -> AsyncSession:
+        return await db.get_session()
 
 
 class SqlProvider(Provider):
     scope = Scope.REQUEST
 
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.session = session
 
     @provide
-    def get_content_repo(self) -> TagRepo:
-        return SqlTagRepo(self.session)
+    def get_content_repo(self, session: AsyncSession) -> TagRepo:
+        return SqlTagRepo(session)
 
     @provide
-    def get_article_repo(self) -> ArticleRepo:
-        return SqlArticleRepo(self.session)
+    def get_article_repo(self, session: AsyncSession) -> ArticleRepo:
+        return SqlArticleRepo(session)
+
+    @provide
+    def get_category_repo(self, session: AsyncSession) -> CategoryRepo:
+        return SqlCategoryRepo(session)

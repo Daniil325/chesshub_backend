@@ -1,5 +1,10 @@
 from dishka import Provider, Scope, provide
 
+from src.application.article.category import (
+    CreateCategoryCommand,
+    UpdateCategoryCommand,
+    DeleteCategoryCommand,
+)
 from src.application.article.tag import (
     CreateTagCommand,
     DeleteTagCommand,
@@ -25,3 +30,7 @@ class ArticleCommandsProvider(Provider):
     create_article_command = provide(CreateArticleCommand)
     update_article_command = provide(UpdateArticleCommand)
     delete_article_command = provide(DeleteArticleCommand)
+
+    create_category_command = provide(CreateCategoryCommand)
+    update_category_command = provide(UpdateCategoryCommand)
+    delete_category_command = provide(DeleteCategoryCommand)
