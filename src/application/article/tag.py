@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from src.domain.article.entities import Tag
 from src.domain.article.protocols import TagRepo
@@ -15,9 +15,7 @@ class CreateTagCommand:
 
     async def __call__(self, dto: CreateTagDto) -> str:
         identity = self.tag_repo.new_id()
-        print("rrrrrrrrrr", identity)
         tag = Tag.create(identity, dto.name)
-        print("fffffffffff", tag)
         await self.tag_repo.add(tag)
         return identity
 
@@ -35,7 +33,7 @@ class UpdateTagCommand:
     async def __call__(self, dto: UpdateTagDto) -> str:
         tag = await self.tag_repo.get(dto.tag_id)
         tag.name = dto.name
-        await self.tag_repo.update(dto.tag_id, tag)
+        await self.tag_repo.update(dto.tag_id, asdict(tag))
 
 
 @dataclass

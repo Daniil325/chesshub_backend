@@ -21,7 +21,6 @@ class CreateTag(BaseModel):
 
 class UpdateTag(BaseModel):
     model_config = ApiInputModelConfig
-    tag_id: str
     name: str
 
 
@@ -31,9 +30,9 @@ async def post_tag(tag: CreateTag, cmd: FromDishka[CreateTagCommand]):
     return identity
 
 
-@router.patch("/")
-async def patch_tag(tag: UpdateTag, cmd: FromDishka[UpdateTagCommand]):
-    await cmd(UpdateTagDto(tag_id=tag.tag_id, name=tag.name))
+@router.patch("/{id}")
+async def patch_tag(id: str, tag: UpdateTag, cmd: FromDishka[UpdateTagCommand]):
+    await cmd(UpdateTagDto(tag_id=id, name=tag.name))
 
 
 @router.delete("/")

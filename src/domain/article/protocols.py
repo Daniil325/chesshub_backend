@@ -46,23 +46,6 @@ class ArticleReactionRepo(ABC):
     @abstractmethod
     async def delete(self, article_id: str) -> None: ...
 
-    @abstractmethod
-    async def get_by_category(self, category_id: str) -> list[Article]: ...
-
-    @abstractmethod
-    async def get_by_author(self, author_id: str) -> list[Article]: ...
-
-    async def add(self, article_reaction: ArticleReaction) -> None: ...
-
-    @abstractmethod
-    async def get(self, article_reaction_id: str) -> ArticleReaction | None: ...
-
-    @abstractmethod
-    async def update(self, id: str, reaction: Reaction) -> None: ...
-
-    @abstractmethod
-    async def delete(self, id: str) -> None: ...
-
 
 class ArticleTagRepo(ABC):
 
