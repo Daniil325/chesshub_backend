@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from src.domain.article.entities import Category
 from src.domain.article.protocols import CategoryRepo
@@ -33,7 +33,7 @@ class UpdateCategoryCommand:
     async def __call__(self, dto: UpdateCategoryDto) -> str:
         category = await self.category_repo.get(dto.category_id)
         category.name = dto.name
-        await self.category_repo.update(dto.category_id, category)
+        await self.category_repo.update(dto.category_id, asdict(category))
 
 
 @dataclass
