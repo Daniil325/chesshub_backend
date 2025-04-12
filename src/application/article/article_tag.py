@@ -49,4 +49,5 @@ class DeleteArticleTagCommand:
     article_tag_repo: ArticleTagRepo
 
     async def __call__(self, tag_id: str, article_id: str) -> None:
-        await self.article_tag_repo.delete(tag_id, article_id)
+        article_tag = ArticleTag(tag_id=tag_id, article_id=article_id)
+        await self.article_tag_repo.delete(article_tag)
