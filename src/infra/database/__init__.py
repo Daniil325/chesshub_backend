@@ -7,12 +7,14 @@ from src.domain.article.protocols import (
     CategoryRepo,
     TagRepo,
     ArticleTagRepo,
+    ArticleReactionRepo
 )
 from src.infra.database.sqla_repo import (
     SqlArticleRepo,
     SqlCategoryRepo,
     SqlTagRepo,
     SqlArticleTagRepo,
+    SqlArticleReactionRepo
 )
 
 
@@ -53,3 +55,7 @@ class SqlProvider(Provider):
     @provide
     def get_article_tag_repo(self, session: AsyncSession) -> ArticleTagRepo:
         return SqlArticleTagRepo(session)
+    
+    @provide
+    def get_article_reaction_repo(self, session: AsyncSession) -> ArticleReactionRepo:
+        return SqlArticleReactionRepo(session)

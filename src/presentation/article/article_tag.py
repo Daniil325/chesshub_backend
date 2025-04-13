@@ -22,8 +22,6 @@ class CreateAricleTag(BaseModel):
 
 class UpdateArticleTag(BaseModel):
     model_config = ApiInputModelConfig
-    old_tag_id: str
-    old_article_id: str
     new_tag_id: str
     new_article_id: str
 
@@ -42,12 +40,16 @@ async def post_article_tag(
 
 @router.patch("/{tag_id}/{article_id}")
 async def patch_article_tag(
-    article_tag: UpdateArticleTag, cmd: FromDishka[UpdateArticleTagCommand]
+    article_tag: UpdateArticleTag,
+    cmd: FromDishka[UpdateArticleTagCommand],
+    old_tag_id: str,
+    old_article_id: str,
 ):
+
     await cmd(
         UpdateArticleTagDto(
-            old_article_id=article_tag.old_article_id,
-            old_tag_id=article_tag.old_tag_id,
+            old_article_id=old_article_id,
+            old_tag_id=old_tag_id,
             new_tag_id=article_tag.new_tag_id,
             new_article_id=article_tag.new_article_id,
         )

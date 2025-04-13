@@ -36,6 +36,7 @@ class SqlHelper[T]:
         return (await self.session.execute(stmt)).scalar_one_or_none()
 
     async def add(self, item: T) -> None:
+        print(item, "писька")
         try:
             self.session.add(item)
             await self.session.commit()
