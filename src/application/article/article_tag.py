@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from src.domain.article.entities import ArticleTag
 from src.domain.article.protocols import ArticleTagRepo
@@ -33,14 +33,9 @@ class UpdateArticleTagCommand:
     article_tag_repo: ArticleTagRepo
 
     async def __call__(self, dto: UpdateArticleTagDto) -> dict:
-        article_tag = await self.article_tag_repo.get(
-            [dto.old_tag_id, dto.old_article_id]
-        )
-
-        article_tag.tag_id = dto.new_tag_id
-        article_tag.article_id = dto.new_article_id
-
-        await self.article_tag_repo.update(article_tag)
+        await self.article_tag_repo.delete(dto.old_tag_id, dto.old_article_id)
+        new_article_tag = ArticleTag.create(dto.new_tag_id, dto.new_article_id)
+        await self.article_tag_repo.add(new_article_tag)
         return [dto.new_tag_id, dto.new_article_id]
 
 
@@ -49,5 +44,5 @@ class DeleteArticleTagCommand:
     article_tag_repo: ArticleTagRepo
 
     async def __call__(self, tag_id: str, article_id: str) -> None:
-        article_tag = ArticleTag(tag_id=tag_id, article_id=article_id)
-        await self.article_tag_repo.delete(article_tag)
+        await self.article_tag_repo.delete(tag_id, article_id)
+        return [tag_id, article_id]

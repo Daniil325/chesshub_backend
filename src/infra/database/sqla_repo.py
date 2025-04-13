@@ -4,8 +4,14 @@ from uuid import UUID, uuid4
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.article.entities import Article, ArticleReaction, ArticleTag, Category, Tag
-from src.domain.article.protocols import ArticleRepo, TagRepo
+from src.domain.article.entities import (
+    Article,
+    ArticleReaction,
+    ArticleTag,
+    Category,
+    Tag,
+)
+from src.domain.article.protocols import ArticleRepo, ArticleTagRepo, TagRepo
 
 T = TypeVar("T")
 
@@ -61,10 +67,35 @@ class SqlCategoryRepo(SqlHelper):
         super().__init__(session, Category)
 
 
-class SqlArticleTagRepo(SqlHelper):
+class SqlArticleTagRepo(SqlHelper, ArticleTagRepo):
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, ArticleTag)
+
+    async def get(self, tag_id: UUID, article_id: UUID):
+        stmt = select(self.model).where(
+            self.model.tag_id == tag_id and self.model.article_id == article_id
+        )
+        return (await self.session.execute(stmt)).scalar_one_or_none()
+
+    async def update(
+        self, tag_id: UUID, article_id: UUID, changes: dict[str, Any]
+    ) -> None:
+        print("ssss", tag_id, article_id)
+        stmt = (
+            update(self.model)
+            .where(self.model.tag_id == tag_id and self.model.article_id == article_id)
+            .values(**changes)
+        )
+        await self.session.execute(stmt)
+        await self.session.commit()
+
+    async def delete(self, tag_id: UUID, article_id: UUID) -> None:
+        stmt = delete(self.model).where(
+            self.model.tag_id == tag_id and self.model.article_id == article_id
+        )
+        await self.session.execute(stmt)
+        await self.session.commit()
 
 
 class SqlArticleReactionRepo(SqlHelper):

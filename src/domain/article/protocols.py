@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
+from uuid import UUID
 
 from src.domain.article.entities import (
     Article,
@@ -56,10 +57,10 @@ class ArticleTagRepo(ABC):
     async def add(self, article_tag: ArticleTag) -> None: ...
 
     @abstractmethod
-    async def get(self, article_tag_keys: dict) -> ArticleTag | None: ...
+    async def get(self, tad_id: UUID, article_id: UUID) -> ArticleTag | None: ...
 
     @abstractmethod
-    async def update(self, article_tag_keys: ArticleTag) -> None: ...
+    async def update(self, tad_id: UUID, article_id: UUID) -> None: ...
 
     @abstractmethod
     async def delete(self, tag_id: str, article_id: str) -> None: ...
