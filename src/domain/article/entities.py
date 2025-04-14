@@ -7,36 +7,7 @@ from src.domain.base import Entity, datetime_factory
 
 
 @dataclass
-class Article(Entity):
-    title: str
-    content: dict[str, Any]
-    category_id: str
-    preview: str | None = None
-    pud_date: datetime = field(default_factory=datetime_factory)
-    views: int = 0
-
-    @classmethod
-    def create(
-        cls,
-        id: str,
-        content: dict[str, Any],
-        author_id: str,
-        category_id: str,
-        preview: str | None = None,
-    ) -> Self:
-        inst = cls(id)
-        inst.title = content["title"]  # raise title not found
-        inst.content = content
-        inst.author_id = author_id
-        inst.category_id = category_id
-        inst.preview = preview
-        inst.views = 0
-        inst.pud_date = datetime.utcnow()
-        return inst
-
-
-@dataclass
-class Category(Entity):
+class Tag(Entity):
     name: str
 
     @classmethod
@@ -51,7 +22,35 @@ class Category(Entity):
 
 
 @dataclass
-class Tag(Entity):
+class Article(Entity):
+    title: str
+    content: dict[str, Any]
+    category_id: str
+    preview: str | None = None
+    pub_date: datetime = field(default_factory=datetime_factory)
+    views: int = 0
+
+    @classmethod
+    def create(
+        cls,
+        id: str,
+        title: str,
+        content: dict[str, Any],
+        category_id: str,
+        preview: str | None = None,
+    ) -> Self:
+        inst = cls(id, title, content, category_id, preview)
+        inst.title = title
+        inst.content = content
+        inst.category_id = category_id
+        inst.preview = preview
+        inst.views = 0
+        inst.pub_date = datetime.utcnow()
+        return inst
+
+
+@dataclass
+class Category(Entity):
     name: str
 
     @classmethod
@@ -78,7 +77,7 @@ class ArticleTag:
     ) -> Self:
         inst = cls(tag_id, article_id)
         inst.tag_id = tag_id
-        inst.article_id = tag_id
+        inst.article_id = article_id
         return inst
 
 
