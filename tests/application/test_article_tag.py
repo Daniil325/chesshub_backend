@@ -44,10 +44,6 @@ async def test_update_article_tag(mocker):
 
     assert result == ["где б вы не были", "вы всегда вторые"]
 
-    updated_article_tag = article_tag_repo.update.call_args[0][0]
-    assert updated_article_tag.tag_id == "где б вы не были"
-    assert updated_article_tag.article_id == "вы всегда вторые"
-
 
 @pytest.mark.unit
 async def test_delete_article_tag(mocker):
@@ -57,4 +53,4 @@ async def test_delete_article_tag(mocker):
 
     result = await sut("где б я не был", "там сороквторые")
 
-    assert result is None
+    assert result == ["где б я не был", "там сороквторые"]

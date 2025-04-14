@@ -7,6 +7,21 @@ from src.domain.base import Entity, datetime_factory
 
 
 @dataclass
+class Tag(Entity):
+    name: str
+
+    @classmethod
+    def create(
+        cls,
+        id: str,
+        name: str,
+    ) -> Self:
+        inst = cls(id)
+        inst.name = name
+        return inst
+
+
+@dataclass
 class Article(Entity):
     title: str
     content: dict[str, Any]
@@ -50,21 +65,6 @@ class Category(Entity):
 
 
 @dataclass
-class Tag(Entity):
-    name: str
-
-    @classmethod
-    def create(
-        cls,
-        id: str,
-        name: str,
-    ) -> Self:
-        inst = cls(id)
-        inst.name = name
-        return inst
-
-
-@dataclass
 class ArticleTag:
     tag_id: str
     article_id: str
@@ -77,7 +77,7 @@ class ArticleTag:
     ) -> Self:
         inst = cls(tag_id, article_id)
         inst.tag_id = tag_id
-        inst.article_id = tag_id
+        inst.article_id = article_id
         return inst
 
 

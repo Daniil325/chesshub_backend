@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 from src.domain.article.entities import ArticleReaction, Reaction
 from src.domain.article.protocols import ArticleReactionRepo
@@ -37,7 +37,7 @@ class UpdateArticleReactionCommand:
         article_reaction = await self.article_reaction_repo.get(dto.id)
         article_reaction.reaction = dto.reaction
 
-        await self.article_reaction_repo.update(dto.id, dto.reaction)
+        await self.article_reaction_repo.update(dto.id, asdict(dto))
 
 
 @dataclass

@@ -2,8 +2,20 @@ from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.infra.database.session import DBSession
-from src.domain.article.protocols import ArticleRepo, CategoryRepo, TagRepo
-from src.infra.database.sqla_repo import SqlArticleRepo, SqlCategoryRepo, SqlTagRepo
+from src.domain.article.protocols import (
+    ArticleRepo,
+    CategoryRepo,
+    TagRepo,
+    ArticleTagRepo,
+    ArticleReactionRepo
+)
+from src.infra.database.sqla_repo import (
+    SqlArticleRepo,
+    SqlCategoryRepo,
+    SqlTagRepo,
+    SqlArticleTagRepo,
+    SqlArticleReactionRepo
+)
 
 
 class DBSessionProvider(Provider):
@@ -39,3 +51,11 @@ class SqlProvider(Provider):
     @provide
     def get_category_repo(self, session: AsyncSession) -> CategoryRepo:
         return SqlCategoryRepo(session)
+
+    @provide
+    def get_article_tag_repo(self, session: AsyncSession) -> ArticleTagRepo:
+        return SqlArticleTagRepo(session)
+    
+    @provide
+    def get_article_reaction_repo(self, session: AsyncSession) -> ArticleReactionRepo:
+        return SqlArticleReactionRepo(session)

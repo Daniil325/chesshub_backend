@@ -15,6 +15,16 @@ from src.application.article.article import (
     UpdateArticleCommand,
     DeleteArticleCommand,
 )
+from src.application.article.article_tag import (
+    CreateArticleTagCommand,
+    UpdateArticleTagCommand,
+    DeleteArticleTagCommand,
+)
+from src.application.article.article_reaction import (
+    CreateArticleReactionCommand,
+    UpdateArticleReactionCommand,
+    DeleteArticleReactionCommand,
+)
 
 
 class ArticleCommandsProvider(Provider):
@@ -34,3 +44,11 @@ class ArticleCommandsProvider(Provider):
     create_category_command = provide(CreateCategoryCommand)
     update_category_command = provide(UpdateCategoryCommand)
     delete_category_command = provide(DeleteCategoryCommand)
+
+    create_article_tag_command = provide(CreateArticleTagCommand)
+    update_article_tag_command = provide(UpdateArticleTagCommand)
+    delete_article_tag_command = provide(DeleteArticleTagCommand)
+
+    create_article_reaction_command = provide(CreateArticleReactionCommand)
+    update_article_reaction_command = provide(UpdateArticleReactionCommand)
+    delete_article_reaction_command = provide(DeleteArticleReactionCommand)
