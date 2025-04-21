@@ -1,5 +1,4 @@
 from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
-from sqlalchemy.orm import registry
 
 from src.domain.article.entities import (
     Article,
@@ -8,10 +7,7 @@ from src.domain.article.entities import (
     Category,
     Tag,
 )
-
-
-mapper_registry = registry()
-metadata = mapper_registry.metadata
+from .base import metadata, mapper_registry
 
 article_table = Table(
     "article",
