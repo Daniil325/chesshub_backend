@@ -1,9 +1,9 @@
 from dataclasses import asdict, dataclass
 from typing import Any
 
+from src.domain.article.protocols import ArticleRepo
 from src.domain.exceptions import DomainError
 from src.domain.article.entities import Article
-from src.infra.database.sqla_repo import ArticleRepo
 from src.infra.protocols import S3Storage
 
 

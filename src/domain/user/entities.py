@@ -24,7 +24,7 @@ class User(Entity):
     username: str
     password: str
     email: str
+    role: Role
     profile_photo: str | None = None
     lichess_data: RatingData | None = None
     chesscom_data: RatingData | None = None
-    role: Role

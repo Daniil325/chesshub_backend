@@ -1,11 +1,11 @@
 from datetime import UTC, datetime
 from dataclasses import dataclass, field
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 
 @dataclass
 class Entity:
-    id: str = field(default_factory=uuid4, kw_only=True)
+    id: UUID
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Entity):

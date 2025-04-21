@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from domain.user.exceptions import FullUserNameException
+from src.domain.user.exceptions import FullUserNameException
 
 
 @dataclass

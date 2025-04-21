@@ -6,13 +6,12 @@ from dishka import make_async_container
 from dishka.integrations.fastapi import setup_dishka
 
 from src.infra.s3 import S3Provider
-from src.settings import settings
+from src.settings import load_settings
 
 from src.infra.database import DBSessionProvider, SqlProvider
-from src.infra.database.models import mapper_registry
 from src.application.article import ArticleCommandsProvider
 from src.presentation.article import router as article_router
-
+from src.infra.database.models.base import metadata
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,7 +28,8 @@ def base_create_app():
 
 def create_app() -> FastAPI:
     app = base_create_app()
-    print(mapper_registry)
+    settings = load_settings()
+    print(metadata)
 
     app.add_middleware(
         CORSMiddleware,
@@ -38,11 +38,11 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
+
     container = make_async_container(
         DBSessionProvider(settings.pg_dsn),
         SqlProvider(),
-        S3Provider(),
+        S3Provider(settings),
         ArticleCommandsProvider(),
     )
     setup_dishka(container, app)

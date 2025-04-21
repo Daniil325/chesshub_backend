@@ -1,6 +1,13 @@
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.infra.database.repositories.article import (
+    SqlArticleReactionRepo,
+    SqlArticleRepo,
+    SqlArticleTagRepo,
+    SqlCategoryRepo,
+    SqlTagRepo,
+)
 from src.infra.database.session import DBSession
 from src.domain.article.protocols import (
     ArticleRepo,
@@ -8,13 +15,6 @@ from src.domain.article.protocols import (
     TagRepo,
     ArticleTagRepo,
     ArticleReactionRepo,
-)
-from src.infra.database.sqla_repo import (
-    SqlArticleRepo,
-    SqlCategoryRepo,
-    SqlTagRepo,
-    SqlArticleTagRepo,
-    SqlArticleReactionRepo,
 )
 
 

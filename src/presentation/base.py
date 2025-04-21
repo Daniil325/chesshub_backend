@@ -50,3 +50,10 @@ Item = TypeVar("Item", bound=BaseModel)
 
 class ListResponse(SuccessResponse, Generic[Item]):
     items: list[Item]
+
+
+class PaginatedListResponse(ListResponse):
+    page: int
+    total: int
+    total_pages: int
+    per_page: int

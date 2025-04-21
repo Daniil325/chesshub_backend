@@ -16,7 +16,7 @@ class Tag(Entity):
         id: str,
         name: str,
     ) -> Self:
-        inst = cls(id)
+        inst = cls(id, name)
         inst.name = name
         return inst
 
@@ -59,7 +59,7 @@ class Category(Entity):
         id: str,
         name: str,
     ) -> Self:
-        inst = cls(id)
+        inst = cls(id, name)
         inst.name = name
         return inst
 
