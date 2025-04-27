@@ -1,17 +1,17 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
 from dishka import make_async_container
 from dishka.integrations.fastapi import setup_dishka
+from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
+from src.application.article import ArticleCommandsProvider
+from src.infra.database import DBSessionProvider, ReadersProvider, SqlProvider
+from src.infra.database.models.base import metadata
 from src.infra.s3 import S3Provider
+from src.presentation.article import router as article_router
 from src.settings import load_settings
 
-from src.infra.database import DBSessionProvider, SqlProvider
-from src.application.article import ArticleCommandsProvider
-from src.presentation.article import router as article_router
-from src.infra.database.models.base import metadata
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -44,6 +44,7 @@ def create_app() -> FastAPI:
         SqlProvider(),
         S3Provider(settings),
         ArticleCommandsProvider(),
+        ReadersProvider(),
     )
     setup_dishka(container, app)
     return app

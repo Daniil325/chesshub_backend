@@ -1,6 +1,16 @@
+from typing import AsyncIterable
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.domain.article.protocols import (
+    ArticleReactionRepo,
+    ArticleRepo,
+    ArticleTagRepo,
+    CategoryRepo,
+    TagRepo,
+)
+from src.infra.database.models.base import article_table
+from src.infra.database.reader import ArticleReader, CategoryReader, TagReader
 from src.infra.database.repositories.article import (
     SqlArticleReactionRepo,
     SqlArticleRepo,
@@ -9,13 +19,6 @@ from src.infra.database.repositories.article import (
     SqlTagRepo,
 )
 from src.infra.database.session import DBSession
-from src.domain.article.protocols import (
-    ArticleRepo,
-    CategoryRepo,
-    TagRepo,
-    ArticleTagRepo,
-    ArticleReactionRepo,
-)
 
 
 class DBSessionProvider(Provider):
@@ -30,8 +33,9 @@ class DBSessionProvider(Provider):
         return DBSession(self.settings)
 
     @provide
-    async def get_session(self, db: DBSession) -> AsyncSession:
-        return await db.get_session()
+    async def get_session(self, db: DBSession) -> AsyncIterable[AsyncSession]:
+        async with db.sessionmaker() as session:
+            yield session
 
 
 class SqlProvider(Provider):
@@ -59,3 +63,22 @@ class SqlProvider(Provider):
     @provide
     def get_article_reaction_repo(self, session: AsyncSession) -> ArticleReactionRepo:
         return SqlArticleReactionRepo(session)
+
+
+class ReadersProvider(Provider):
+    scope = Scope.REQUEST
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    @provide
+    def get_article_reader(self, session: AsyncSession) -> ArticleReader:
+        return ArticleReader(session)
+    
+    @provide
+    def get_category_reader(self, session: AsyncSession) -> CategoryReader:
+        return CategoryReader(session)
+    
+    @provide
+    def get_tag_reader(self, session: AsyncSession) -> TagReader:
+        return TagReader(session)

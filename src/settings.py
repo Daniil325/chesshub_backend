@@ -20,7 +20,6 @@ class Settings(BaseSettings):
 
 def load_settings() -> Settings:
     filename = os.environ.get("APP_CONFIG_FILE", "config.yml")
-    print("fdddd", os.path.isfile(filename))
     if os.path.isfile(filename):
         with open(filename) as fd:
             config = yaml.load(fd, Loader=yaml.SafeLoader)

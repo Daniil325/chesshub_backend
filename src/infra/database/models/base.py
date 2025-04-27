@@ -1,5 +1,5 @@
-from sqlalchemy.orm import registry, composite
 from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
+from sqlalchemy.orm import composite, registry, relationship
 
 from src.domain.article.entities import (
     Article,
@@ -8,8 +8,8 @@ from src.domain.article.entities import (
     Category,
     Tag,
 )
-from src.domain.user.value_objects import FullUserName
 from src.domain.user.entities import User
+from src.domain.user.value_objects import FullUserName
 
 mapper_registry = registry()
 metadata = mapper_registry.metadata
@@ -75,15 +75,21 @@ mapper_registry.map_imperatively(
     User,
     user_table,
     properties={
-        "full_name": composite(
-            FullUserName, user_table.c.name, user_table.c.surname
-        )
-    }
+        "full_name": composite(FullUserName, user_table.c.name, user_table.c.surname)
+    },
 )
 
 
 mapper_registry.map_imperatively(Tag, tag_table)
-mapper_registry.map_imperatively(Article, article_table)
-mapper_registry.map_imperatively(Category, category_table)
+mapper_registry.map_imperatively(
+    Category,
+    category_table,
+    properties={"category_info": relationship(Article, back_populates="penis")},
+)
+mapper_registry.map_imperatively(
+    Article,
+    article_table,
+    properties={"penis": relationship(Category, back_populates="category_info")},
+)
 mapper_registry.map_imperatively(ArticleReaction, article_reaction_table)
 mapper_registry.map_imperatively(ArticleTag, article_tag_table)

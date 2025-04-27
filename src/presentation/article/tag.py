@@ -1,17 +1,60 @@
-from dishka.integrations.fastapi import FromDishka, DishkaRoute
-from fastapi import APIRouter
-from pydantic import BaseModel
+from typing import Annotated, Literal
+from uuid import UUID
+
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
+from fastapi import APIRouter, Path, Query
+from pydantic import BaseModel, Field
 
 from src.application.article.tag import (
     CreateTagCommand,
     CreateTagDto,
-    UpdateTagDto,
-    UpdateTagCommand,
     DeleteTagCommand,
+    UpdateTagCommand,
+    UpdateTagDto,
 )
-from src.presentation.base import ApiInputModelConfig
+from src.infra.database.reader import TagReader
+from src.presentation.base import (
+    ApiInputModelConfig,
+    ModelResponse,
+    PaginatedListResponse,
+)
 
 router = APIRouter(route_class=DishkaRoute)
+
+
+class FilterParams(BaseModel):
+    limit: int = Field(100, gt=0, le=100)
+    offset: int = Field(0, ge=0)
+    order_by: Literal["name", "-name"] = "name"
+    filter: str = ""
+
+
+class TagResponse(BaseModel):
+    id: UUID
+    name: str
+
+
+@router.get("/", response_model=PaginatedListResponse[TagResponse])
+async def get_list_categories(
+    filter_query: Annotated[FilterParams, Query()], reader: FromDishka[TagReader]
+):
+    items = await reader.fetch_list(
+        filter_query.offset,
+        filter_query.limit,
+        filter_query.filter,
+        filter_query.order_by,
+    )
+    return {
+        "items": items,
+        "page": filter_query.offset + 1,
+        "per_page": filter_query.limit,
+    }
+
+
+@router.get("/{id}", response_model=ModelResponse[TagResponse])
+async def get_article(reader: FromDishka[TagReader], id: str = Path()):
+    item = await reader.fetch_by_id(id)
+    return {"item": item}
 
 
 class CreateTag(BaseModel):
@@ -31,10 +74,12 @@ async def post_tag(tag: CreateTag, cmd: FromDishka[CreateTagCommand]):
 
 
 @router.patch("/{id}")
-async def patch_tag(id: str, tag: UpdateTag, cmd: FromDishka[UpdateTagCommand]):
-    await cmd(UpdateTagDto(tag_id=id, name=tag.name))
+async def patch_tag(
+    tag: UpdateTag, cmd: FromDishka[UpdateTagCommand], tag_id: str = Path()
+):
+    await cmd(UpdateTagDto(tag_id=tag_id, name=tag.name))
 
 
-@router.delete("/")
-async def delete_tag(tag_id: str, cmd: FromDishka[DeleteTagCommand]):
+@router.delete("/{id}")
+async def delete_tag(cmd: FromDishka[DeleteTagCommand], tag_id: str = Path()):
     await cmd(tag_id)

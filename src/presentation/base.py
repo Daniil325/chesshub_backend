@@ -54,6 +54,4 @@ class ListResponse(SuccessResponse, Generic[Item]):
 
 class PaginatedListResponse(ListResponse):
     page: int
-    total: int
-    total_pages: int
     per_page: int
