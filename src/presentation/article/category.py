@@ -13,7 +13,7 @@ from src.application.article.category import (
     UpdateCategoryDto,
 )
 from src.infra.database.reader import CategoryReader
-from src.presentation.base import ApiInputModelConfig, ModelResponse, PaginatedListResponse
+from src.presentation.base import ApiInputModelConfig, ModelResponse, PaginatedListResponse, SuccessResponse, check_found
 
 router = APIRouter(route_class=DishkaRoute)
 
@@ -55,7 +55,7 @@ async def get_list_categories(
 
 @router.get("/{id}", response_model=ModelResponse[CategoryResponse])
 async def get_article(reader: FromDishka[CategoryReader], id: str = Path()):
-    item = await reader.fetch_by_id(id)
+    item = check_found(await reader.fetch_by_id(id))
     return {"item": item}
 
 
@@ -68,13 +68,15 @@ async def post_category(
     return identity
 
 
-@router.patch("/{id}")
+@router.patch("/{id}", response_model=SuccessResponse)
 async def patch_category(
     id: str, category: UpdateCategory, cmd: FromDishka[UpdateCategoryCommand]
 ):
     await cmd(UpdateCategoryDto(category_id=id, name=category.name))
+    return SuccessResponse()
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=SuccessResponse)
 async def delete_tag(tag_id: str, cmd: FromDishka[DeleteCategoryCommand]):
     await cmd(tag_id)
+    return SuccessResponse()

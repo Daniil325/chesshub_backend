@@ -17,6 +17,8 @@ from src.presentation.base import (
     ApiInputModelConfig,
     ModelResponse,
     PaginatedListResponse,
+    SuccessResponse,
+    check_found,
 )
 
 router = APIRouter(route_class=DishkaRoute)
@@ -53,7 +55,7 @@ async def get_list_categories(
 
 @router.get("/{id}", response_model=ModelResponse[TagResponse])
 async def get_article(reader: FromDishka[TagReader], id: str = Path()):
-    item = await reader.fetch_by_id(id)
+    item = check_found(await reader.fetch_by_id(id))
     return {"item": item}
 
 
@@ -73,13 +75,15 @@ async def post_tag(tag: CreateTag, cmd: FromDishka[CreateTagCommand]):
     return identity
 
 
-@router.patch("/{id}")
+@router.patch("/{id}", response_model=SuccessResponse)
 async def patch_tag(
-    tag: UpdateTag, cmd: FromDishka[UpdateTagCommand], tag_id: str = Path()
+    tag: UpdateTag, cmd: FromDishka[UpdateTagCommand], id: str
 ):
-    await cmd(UpdateTagDto(tag_id=tag_id, name=tag.name))
+    await cmd(UpdateTagDto(tag_id=id, name=tag.name))
+    return SuccessResponse()
 
 
-@router.delete("/{id}")
-async def delete_tag(cmd: FromDishka[DeleteTagCommand], tag_id: str = Path()):
-    await cmd(tag_id)
+@router.delete("/{id}", response_model=SuccessResponse)
+async def delete_tag(cmd: FromDishka[DeleteTagCommand], id: str):
+    await cmd(id)
+    return SuccessResponse()

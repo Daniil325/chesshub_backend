@@ -40,9 +40,11 @@ class ArticleReader(BaseReader):
 
     @staticmethod
     def parse_item(item):
-        article_dict = asdict(item[0])
-        article_dict["category_name"] = item[1].name
-        return article_dict
+        if item:
+            article_dict = asdict(item[0])
+            article_dict["category_name"] = item[1].name
+            return article_dict
+        return item
 
     async def fetch_list(
         self, page: int, per_page: int, filter: str, order_by: str
@@ -56,7 +58,10 @@ class ArticleReader(BaseReader):
     async def fetch_by_id(self, id: str):    
         self.stmt = self.stmt.where(Article.id == id)
         item = (await self.session.execute(self.stmt)).all()
-        return self.parse_item(item[0])
+        if item:
+            return self.parse_item(item[0])
+        print("ddddd", item)
+        return None
         
     async def fetch_list_by_article(self, page, per_page, filter, order): ...
 

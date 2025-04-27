@@ -14,7 +14,7 @@ from src.application.article.article import (
     UpdateArticleDto,
 )
 from src.infra.database.reader import ArticleReader
-from src.presentation.base import ApiInputModelConfig, ModelResponse, PaginatedListResponse, SuccessResponse
+from src.presentation.base import APIModelConfig, ApiInputModelConfig, ModelResponse, PaginatedListResponse, SuccessResponse, check_found
 
 router = APIRouter(route_class=DishkaRoute)
 
@@ -36,6 +36,7 @@ class ArticleResponse(BaseModel):
     views: int = 0
     category_id: UUID
     category_name: str
+    model_config = APIModelConfig
 
 
 @router.get("/", response_model=PaginatedListResponse[ArticleResponse])
@@ -51,9 +52,12 @@ async def get_articles_list(
     return {"items": result, "page": filter_query.offset + 1, "per_page": filter_query.limit}
 
 
-@router.get("/{id}", response_model=ModelResponse[ArticleResponse])
+ArticleModelResponse = ModelResponse[ArticleResponse]
+
+
+@router.get("/{id}", response_model=ArticleModelResponse)
 async def get_article(reader: FromDishka[ArticleReader], id: str = Path()):
-    item = await reader.fetch_by_id(id)
+    item = check_found(await reader.fetch_by_id(id))
     return {"item": item}
 
 
@@ -88,8 +92,10 @@ async def update_article(
     article: UpdateArticle, cmd: FromDishka[UpdateArticleCommand], id: UUID = Path(...)
 ):
     await cmd(UpdateArticleDto(article_id=id, **article))
+    return SuccessResponse()
 
 
 @router.delete("/{id}", response_model=SuccessResponse)
 async def delete_article(cmd: FromDishka[DeleteArticleCommand], id: UUID = Path(...)):
     await cmd(id)
+    return SuccessResponse()
