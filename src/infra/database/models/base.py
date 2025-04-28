@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
+from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
 from sqlalchemy.orm import composite, registry, relationship
 
 from src.domain.article.entities import (
@@ -70,6 +70,54 @@ user_table = Table(
     Column("chesscom_data", JSON),
     Column("role", String, nullable=False),
 )
+
+course_table = Table(
+    "course",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("description", JSON),
+    Column("author_id", Uuid, ForeignKey("user.id")),
+    Column("pub_date", DateTime),
+    Column("price", Integer),
+)
+
+test_table = Table(
+    "test",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("min_score", JSON),
+    Column("time_limit", Uuid, ForeignKey("course.id")),
+)
+
+lesson_table = Table(
+    "lesson",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("content", JSON),
+    Column("course_id", Uuid, ForeignKey("course.id")),
+    Column("test_id", Uuid, ForeignKey("test.id"), nullable=True),
+)
+
+question_table = Table(
+    "question",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("test_id", Uuid, ForeignKey("test.id"), nullable=True),
+)
+
+answer_table = Table(
+    "question",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("text", String, nullable=False),
+    Column("question_id", Uuid, ForeignKey("question.id"), nullable=True),
+    Column("is_right", Boolean),
+)
+
 
 mapper_registry.map_imperatively(
     User,
