@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any
 
 from src.domain.course.entities import Course
@@ -53,7 +53,7 @@ class UpdateCourseDto(BaseCourseCommand):
         course.description = dto.description
         course.price = dto.price
         course.preview = dto.preview
-        await self.course_repo.update(dto.id, course)
+        await self.course_repo.update(dto.id, asdict(course))
         
         
 @dataclass

@@ -54,8 +54,13 @@ class Lesson(Entity):
 @dataclass
 class Test(Entity):
     name: str
-    min_score: int
-    time_limit: int | None = None
+    min_score: int = 0
+    time_limit: int = 0
+
+    @classmethod
+    def create(cls, id: str, name: str, min_score: int = 0, time_limit: int = 0):
+        inst = cls(id, name, min_score, time_limit)
+        return inst
 
 
 @dataclass
@@ -63,12 +68,22 @@ class Question(Entity):
     name: str
     test_id: str
 
+    @classmethod
+    def create(cls, id: str, name: str, test_id: str) -> Self:
+        inst = cls(id, name, test_id)
+        return inst
+
 
 @dataclass
 class Answer(Entity):
     text: str
     question_id: str
     is_right: bool
+
+    @classmethod
+    def create(cls, id: str, name: str, test_id: str) -> Self:
+        inst = cls(id, name, test_id)
+        return inst
 
 
 @dataclass
