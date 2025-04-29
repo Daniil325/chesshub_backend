@@ -6,7 +6,6 @@ from src.domain.course.entities import Answer, Course, Lesson, Question, Result,
 
 
 class CourseRepo(ABC):
-    
     @abstractmethod
     def new_id(self) -> str: ...
 
@@ -21,10 +20,9 @@ class CourseRepo(ABC):
 
     @abstractmethod
     async def delete(self, id: UUID) -> None: ...
-    
-    
+
+
 class LessonRepo(ABC):
-    
     @abstractmethod
     def new_id(self) -> str: ...
 
@@ -39,10 +37,9 @@ class LessonRepo(ABC):
 
     @abstractmethod
     async def delete(self, id: UUID) -> None: ...
-    
-    
+
+
 class TestRepo(ABC):
-    
     @abstractmethod
     def new_id(self) -> str: ...
 
@@ -57,15 +54,17 @@ class TestRepo(ABC):
 
     @abstractmethod
     async def delete(self, id: UUID) -> None: ...
-    
-    
+
+
 class QuestionRepo(ABC):
-    
     @abstractmethod
     def new_id(self) -> str: ...
 
     @abstractmethod
     async def add(self, item: Question) -> None: ...
+
+    @abstractmethod
+    async def get_by_test(self, test_id: UUID) -> list[Question]: ...
 
     @abstractmethod
     async def get(self, id: UUID) -> Question | None: ...
@@ -75,10 +74,9 @@ class QuestionRepo(ABC):
 
     @abstractmethod
     async def delete(self, id: UUID) -> None: ...
-    
-    
+
+
 class AnswerRepo(ABC):
-    
     @abstractmethod
     def new_id(self) -> str: ...
 
@@ -93,10 +91,9 @@ class AnswerRepo(ABC):
 
     @abstractmethod
     async def delete(self, id: UUID) -> None: ...
-    
-    
+
+
 class ResultRepo(ABC):
-    
     @abstractmethod
     def new_id(self) -> str: ...
 

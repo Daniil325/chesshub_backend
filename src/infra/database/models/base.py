@@ -78,6 +78,7 @@ course_table = Table(
     Column("name", String, nullable=False),
     Column("description", JSON),
     Column("author_id", Uuid, ForeignKey("user.id")),
+    Column("preview", String),
     Column("pub_date", DateTime),
     Column("price", Integer),
 )
@@ -110,7 +111,7 @@ question_table = Table(
 )
 
 answer_table = Table(
-    "question",
+    "answer",
     metadata,
     Column("id", Uuid, primary_key=True),
     Column("text", String, nullable=False),
@@ -126,7 +127,6 @@ mapper_registry.map_imperatively(
         "full_name": composite(FullUserName, user_table.c.name, user_table.c.surname)
     },
 )
-
 
 mapper_registry.map_imperatively(Tag, tag_table)
 mapper_registry.map_imperatively(

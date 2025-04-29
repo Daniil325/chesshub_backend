@@ -40,7 +40,6 @@ class SqlArticleTagRepo(SqlHelper, ArticleTagRepo):
     async def update(
         self, tag_id: UUID, article_id: UUID, changes: dict[str, Any]
     ) -> None:
-        print("ssss", tag_id, article_id)
         stmt = (
             update(self.model)
             .where(self.model.tag_id == tag_id and self.model.article_id == article_id)

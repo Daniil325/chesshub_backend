@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any
 
 from src.domain.article.protocols import ArticleRepo
@@ -33,7 +33,6 @@ class CreateArticleCommand(BaseArticleCommand):
     async def __call__(self, dto: CreateArticleDto) -> str:
         identity = self.article_repo.new_id()
         await self.check_image(dto.preview)
-        print(asdict(dto))
         article = Article.create(identity, dto.title, dto.content, dto.category_id, dto.preview)
         await self.article_repo.add(article)
         return identity
@@ -55,6 +54,7 @@ class UpdateArticleCommand(BaseArticleCommand):
         article = await self.article_repo.get(dto.article_id)
         await self.check_image(dto.preview)
         article.content = dto.content
+        article.title = dto.title
         article.preview = dto.preview
         await self.article_repo.update(dto.article_id, article)
 
