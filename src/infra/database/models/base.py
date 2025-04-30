@@ -1,6 +1,7 @@
 from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
 from sqlalchemy.orm import composite, registry, relationship
 
+from src.domain.course.entities import Answer, Course, Lesson, Question, Test
 from src.domain.article.entities import (
     Article,
     ArticleReaction,
@@ -141,3 +142,9 @@ mapper_registry.map_imperatively(
 )
 mapper_registry.map_imperatively(ArticleReaction, article_reaction_table)
 mapper_registry.map_imperatively(ArticleTag, article_tag_table)
+
+mapper_registry.map_imperatively(Course, course_table)
+mapper_registry.map_imperatively(Lesson, lesson_table)
+mapper_registry.map_imperatively(Question, question_table)
+mapper_registry.map_imperatively(Test, test_table)
+mapper_registry.map_imperatively(Answer, answer_table)

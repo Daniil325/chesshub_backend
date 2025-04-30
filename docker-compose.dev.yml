@@ -1,14 +1,32 @@
 version: "3.9"
 services:
-  postgres:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
+    environment:
+      - DATABASE_URL=postgresql://user:password@localhost:5432/chesshub_db
+    ports:
+      - '8000:8000'
+    networks:
+      - net
+    restart: on-failure
+    depends_on:
+      - db
+
+  db:
+    container_name: db
     image: postgres
     environment:
       POSTGRES_DB: chesshub_db
       POSTGRES_USER: user
+      PG_PORT: 5432
       POSTGRES_PASSWORD: password
+      PG_HOST: localhost
       PGDATA: /var/lib/postgresql/data
     ports:
-      - "5252:5432"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -27,6 +45,7 @@ services:
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
+
 
 volumes:
   minio_data:
