@@ -1,6 +1,8 @@
 from dataclasses import asdict, dataclass
 
 
+from application.course.answer import CreateAnswerCommand
+from application.course.question import CreateQuestionCommand
 from src.domain.course.entities import Test
 from src.domain.course.protocols import TestRepo
 

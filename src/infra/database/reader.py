@@ -6,7 +6,7 @@ from uuid import UUID
 from sqlalchemy import Table, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.course.entities import Course, Lesson, Test
+from src.domain.course.entities import Answer, Course, Lesson, Question, Test
 from src.domain.article.entities import Article, Category, Tag
 from src.infra.database.filters import SqlAlchemyBuilder
 from src.infra.database.models.base import (
@@ -14,7 +14,8 @@ from src.infra.database.models.base import (
     category_table,
     tag_table,
     course_table,
-    lesson_table
+    lesson_table,
+    test_table
 )
 
 
@@ -125,7 +126,15 @@ class LessonReader(BaseReader):
     
     
 class TestReader(BaseReader):
-    ...
+    stmt = select(Test)
+
+    def __init__(self, session: AsyncSession) -> None:
+        super.__init__(session, test_table, Test)
+
+    async def fetch_by_id(self, id: UUID):
+        stmt = select(Test, Question, Answer).join(Question).join(Answer, Question.id == Answer.question_id).where(Test.id == id)
+        result = (await self.session.execute(stmt)).all()
+        return result
 
 
 class CategoryReader(BaseReader):

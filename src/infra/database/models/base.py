@@ -133,18 +133,18 @@ mapper_registry.map_imperatively(Tag, tag_table)
 mapper_registry.map_imperatively(
     Category,
     category_table,
-    properties={"category_info": relationship(Article, back_populates="penis")},
+    properties={"category_info": relationship(Article, back_populates="article")},
 )
 mapper_registry.map_imperatively(
     Article,
     article_table,
-    properties={"penis": relationship(Category, back_populates="category_info")},
+    properties={"article": relationship(Category, back_populates="category_info")},
 )
 mapper_registry.map_imperatively(ArticleReaction, article_reaction_table)
 mapper_registry.map_imperatively(ArticleTag, article_tag_table)
 
-mapper_registry.map_imperatively(Course, course_table)
-mapper_registry.map_imperatively(Lesson, lesson_table)
-mapper_registry.map_imperatively(Question, question_table)
-mapper_registry.map_imperatively(Test, test_table)
-mapper_registry.map_imperatively(Answer, answer_table)
+mapper_registry.map_imperatively(Course, course_table, properties={"course": relationship(Lesson, back_populates="lessons")})
+mapper_registry.map_imperatively(Lesson, lesson_table, properties={"lessons": relationship(Course, back_populates="course"), "lesson": relationship(Test, back_populates="test")})
+mapper_registry.map_imperatively(Question, question_table, properties={"question": relationship(Answer, back_populates="answers")})
+mapper_registry.map_imperatively(Test, test_table, properties={"test": relationship(Lesson, back_populates="lesson")})
+mapper_registry.map_imperatively(Answer, answer_table, properties={"answers": relationship(Question, back_populates="question")})
