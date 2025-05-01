@@ -5,22 +5,15 @@ from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Path, Query
 from pydantic import BaseModel, Field
 
-from src.application.course.test import (
-    CreateTestCommand,
-    DeleteTestCommand,
-    TestDto,
-    UpdateTestCommand,
-    UpdateTestDto,
+from src.application.course.lesson import (
+    CreateLessonCommand,
+    CreateLessonDto,
+    DeleteLessonCommand,
+    UpdateLessonCommand,
+    UpdateLessonDto,
 )
-from src.infra.database.reader import TestReader
-from src.presentation.base import (
-    APIModelConfig,
-    ApiInputModelConfig,
-    ModelResponse,
-    PaginatedListResponse,
-    SuccessResponse,
-    check_found,
-)
+from src.infra.database.reader import LessonReader
+from src.presentation.base import SuccessResponse, check_found
 
 router = APIRouter(route_class=DishkaRoute)
 
@@ -33,8 +26,8 @@ class FilterParams(BaseModel):
 
 
 @router.get("/")
-async def get_tests_list(
-    filter_query: Annotated[FilterParams, Query()], reader: FromDishka[TestReader]
+async def get_lessons_list(
+    filter_query: Annotated[FilterParams, Query()], reader: FromDishka[LessonReader]
 ):
     result = await reader.fetch_list(
         filter_query.offset,
@@ -50,35 +43,35 @@ async def get_tests_list(
 
 
 @router.get("/{id}")
-async def get_test(reader: FromDishka[TestReader], id: str = Path()):
+async def get_lesson(reader: FromDishka[LessonReader], id: str = Path()):
     item = check_found(await reader.fetch_by_id(id))
     return {"item": item}
 
 
-class CreateTest(BaseModel):
+class CreateLesson(BaseModel):
     name: str
     min_score: int = 0
 
 
 @router.post("/", response_model=SuccessResponse)
-async def post_test(test: CreateTest, cmd: FromDishka[CreateTestCommand]):
-    identity = await cmd(TestDto(test.name, test.min_score, 0))
+async def post_lesson(lesson: CreateLesson, cmd: FromDishka[CreateLessonCommand]):
+    identity = await cmd(CreateLessonDto(lesson.name, lesson.min_score, 0))
     return identity
 
 
-class UpdateTest(CreateTest):
+class UpdateLesson(CreateLesson):
     id: str
 
 
 @router.patch("/{id}", response_model=SuccessResponse)
-async def update_test(
-    test: UpdateTest, cmd: FromDishka[UpdateTestCommand], id: UUID = Path(...)
+async def update_lesson(
+    lesson: UpdateLesson, cmd: FromDishka[UpdateLessonCommand], id: UUID = Path(...)
 ):
-    await cmd(UpdateTestDto(test_id=id, **test))
+    await cmd(UpdateLessonDto(lesson_id=id, **lesson))
     return SuccessResponse()
 
 
 @router.delete("/{id}", response_model=SuccessResponse)
-async def delete_test(cmd: FromDishka[DeleteTestCommand], id: UUID = Path(...)):
+async def delete_lesson(cmd: FromDishka[DeleteLessonCommand], id: UUID = Path(...)):
     await cmd(id)
     return SuccessResponse()
