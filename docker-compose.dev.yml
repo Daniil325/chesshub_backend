@@ -12,6 +12,13 @@ services:
     restart: on-failure
     depends_on:
       - db
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /src
+        - action: rebuild
+          path: ./poetry.lock
 
   db:
     container_name: db

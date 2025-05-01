@@ -1,10 +1,12 @@
 from typing import Annotated, Literal
+from uuid import UUID
 
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Path, Query
 from pydantic import BaseModel, Field, Json
 
-from infra.database.reader import CourseReader
+from src.application.course.course import CreateCourseCommand, CreateCourseDto, DeleteCourseCommand, UpdateCourseCommand, UpdateCourseDto
+from src.infra.database.reader import CourseReader
 from src.presentation.base import (
     APIModelConfig,
     ApiInputModelConfig,
@@ -47,4 +49,43 @@ async def get_article(reader: FromDishka[CourseReader], id: str = Path()):
     return {"item": item}
 
 
+class CreateCourse(BaseModel):
+    model_config = ApiInputModelConfig
+    name: str
+    description: Json
+    author_id: str
+    price: int
+    preview: str | None = None
 
+
+@router.post("/", response_model=SuccessResponse)
+async def post_article(course: CreateCourse, cmd: FromDishka[CreateCourseCommand]):
+    identity = await cmd(
+        CreateCourseDto(
+            course.name, course.description, course.author_id, course.price, course.preview
+        )
+    )
+    return identity
+
+
+
+class UpdateArticle(BaseModel):
+    model_config = ApiInputModelConfig
+    title: str
+    description: Json
+    category_id: str
+    preview: str | None = None
+
+
+@router.patch("/{id}", response_model=SuccessResponse)
+async def update_article(
+    article: UpdateArticle, cmd: FromDishka[UpdateCourseCommand], id: UUID = Path(...)
+):
+    await cmd(UpdateCourseDto(article_id=id, **article))
+    return SuccessResponse()
+
+
+@router.delete("/{id}", response_model=SuccessResponse)
+async def delete_article(cmd: FromDishka[DeleteCourseCommand], id: UUID = Path(...)):
+    await cmd(id)
+    return SuccessResponse()

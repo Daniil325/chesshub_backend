@@ -41,8 +41,12 @@ class CreateCourseCommand(BaseCourseCommand):
 
 
 @dataclass
-class UpdateCourseDto(CreateCourseDto):
+class UpdateCourseDto:
     id: str
+    name: str
+    description: dict[str, Any]
+    price: int
+    preview: str | None = None
 
 
 @dataclass
@@ -50,6 +54,7 @@ class UpdateCourseCommand(BaseCourseCommand):
     async def __call__(self, dto: UpdateCourseDto) -> None:
         course = await self.course_repo.get(dto.id)
         await self.check_image(dto.preview)
+        course.name = dto.name
         course.description = dto.description
         course.price = dto.price
         course.preview = dto.preview

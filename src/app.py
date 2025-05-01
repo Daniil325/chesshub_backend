@@ -7,9 +7,9 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.application.article import ArticleCommandsProvider
 from src.infra.database import DBSessionProvider, ReadersProvider, SqlProvider
-from src.infra.database.models.base import metadata
 from src.infra.s3 import S3Provider
 from src.presentation.article import router as article_router
+from src.presentation.course import router as course_router
 from src.settings import load_settings
 
 
@@ -22,6 +22,7 @@ async def lifespan(app: FastAPI):
 def base_create_app():
     app = FastAPI(lifespan=lifespan)
     app.include_router(article_router)
+    app.include_router(course_router)
     # setup_exception_handlers(app)
     return app
 
@@ -29,7 +30,6 @@ def base_create_app():
 def create_app() -> FastAPI:
     app = base_create_app()
     settings = load_settings()
-    print(metadata)
 
     app.add_middleware(
         CORSMiddleware,

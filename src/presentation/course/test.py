@@ -4,7 +4,7 @@ from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Path, Query
 from pydantic import BaseModel, Field, Json
 
-from infra.database.reader import TestReader
+from src.infra.database.reader import TestReader
 from src.presentation.base import (
     APIModelConfig,
     ApiInputModelConfig,
@@ -20,7 +20,7 @@ router = APIRouter(route_class=DishkaRoute)
 class FilterParams(BaseModel):
     limit: int = Field(100, gt=0, le=100)
     offset: int = Field(0, ge=0)
-    order_by: Literal["pub_date", "-pub_date", "views", "-views"] = "pub_date"
+    order_by: Literal["name"] = "name"
     filter: str = ""
 
 

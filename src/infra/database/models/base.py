@@ -1,4 +1,14 @@
-from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Integer, String, Table, Uuid
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+    Uuid,
+)
 from sqlalchemy.orm import composite, registry, relationship
 
 from src.domain.course.entities import Answer, Course, Lesson, Question, Test
@@ -143,8 +153,37 @@ mapper_registry.map_imperatively(
 mapper_registry.map_imperatively(ArticleReaction, article_reaction_table)
 mapper_registry.map_imperatively(ArticleTag, article_tag_table)
 
-mapper_registry.map_imperatively(Course, course_table, properties={"course": relationship(Lesson, back_populates="lessons")})
-mapper_registry.map_imperatively(Lesson, lesson_table, properties={"lessons": relationship(Course, back_populates="course"), "lesson": relationship(Test, back_populates="test")})
-mapper_registry.map_imperatively(Question, question_table, properties={"question": relationship(Answer, back_populates="answers")})
-mapper_registry.map_imperatively(Test, test_table, properties={"test": relationship(Lesson, back_populates="lesson")})
-mapper_registry.map_imperatively(Answer, answer_table, properties={"answers": relationship(Question, back_populates="question")})
+mapper_registry.map_imperatively(
+    Course,
+    course_table,
+    properties={"course": relationship(Lesson, back_populates="lessons")},
+)
+mapper_registry.map_imperatively(
+    Lesson,
+    lesson_table,
+    properties={
+        "lessons": relationship(Course, back_populates="course"),
+        "lesson": relationship(Test, back_populates="test"),
+    },
+)
+mapper_registry.map_imperatively(
+    Question,
+    question_table,
+    properties={
+        "question": relationship(Answer, back_populates="answers"),
+        "questions": relationship(Test, back_populates="q_test"),
+    },
+)
+mapper_registry.map_imperatively(
+    Test,
+    test_table,
+    properties={
+        "test": relationship(Lesson, back_populates="lesson"),
+        "q_test": relationship(Question, back_populates="questions"),
+    },
+)
+mapper_registry.map_imperatively(
+    Answer,
+    answer_table,
+    properties={"answers": relationship(Question, back_populates="question")},
+)

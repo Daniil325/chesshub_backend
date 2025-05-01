@@ -1,9 +1,9 @@
 from dataclasses import asdict
-from datetime import datetime
-from typing import Any
+from itertools import groupby
 from uuid import UUID
 
 from sqlalchemy import Table, select
+from sqlalchemy.orm import subqueryload, selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.course.entities import Answer, Course, Lesson, Question, Test
@@ -15,7 +15,7 @@ from src.infra.database.models.base import (
     tag_table,
     course_table,
     lesson_table,
-    test_table
+    test_table,
 )
 
 
@@ -78,7 +78,7 @@ class CourseReader(BaseReader):
     stmt = select(Course)
 
     def __init__(self, session: AsyncSession) -> None:
-        super.__init__(session, course_table, Course)
+        super().__init__(session, course_table, Course)
 
     async def fetch_list(
         self,
@@ -92,19 +92,19 @@ class CourseReader(BaseReader):
         items = (await self.session.execute(self.stmt)).all()
         result = [self.parse_item(item) for item in items]
         return result
-        
+
     async def fetch_by_id(self, id: UUID):
         self.stmt = select(Course, Lesson).join(Lesson).where(Course.id == id)
         result = (await self.session.execute(self.stmt)).all()
         return result
-    
-    
+
+
 class LessonReader(BaseReader):
     stmt = select(Lesson)
-    
+
     def __init__(self, session: AsyncSession) -> None:
-        super.__init__(session, lesson_table, Course)
-        
+        super().__init__(session, lesson_table, Course)
+
     async def fetch_list(
         self,
         page: int,
@@ -118,22 +118,51 @@ class LessonReader(BaseReader):
         items = (await self.session.execute(self.stmt)).all()
         result = [self.parse_item(item) for item in items]
         return result
-    
+
     async def fetch_by_id(self, id: UUID):
         self.stmt = select(Lesson, Test).join(Test).where(Lesson.id == id)
         result = (await self.session.execute(self.stmt)).all()
         return result
-    
-    
+
+
 class TestReader(BaseReader):
     stmt = select(Test)
 
     def __init__(self, session: AsyncSession) -> None:
-        super.__init__(session, test_table, Test)
+        super().__init__(session, test_table, Test)
+
+    @staticmethod
+    def grouper(item):
+        return item["question_id"]
+
+    def parse_item(self, items):
+        questions = []
+        answers = []
+        for i in items:
+            if asdict(i[1]) not in questions:
+                questions.append(asdict(i[1]))
+            if asdict(i[2]) not in answers:
+                answers.append(asdict(i[2]))
+
+        answers = sorted(answers, key=self.grouper)
+        for key, group_items in groupby(answers, key=self.grouper):
+            for question in questions:
+                if question["id"] == key:
+                    question["answers"] = [i for i in group_items]
+
+        result = asdict(items[0][0])
+        result["questions"] = questions
+        return result
 
     async def fetch_by_id(self, id: UUID):
-        stmt = select(Test, Question, Answer).join(Question).join(Answer, Question.id == Answer.question_id).where(Test.id == id)
-        result = (await self.session.execute(stmt)).all()
+        stmt = (
+            select(Test, Question, Answer)
+            .filter(Question.test_id == Test.id)
+            .filter(Answer.question_id == Question.id)
+            .where(Test.id == id)
+        )
+        items = (await self.session.execute(stmt)).all()
+        result = self.parse_item(items)
         return result
 
 
