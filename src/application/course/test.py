@@ -1,8 +1,5 @@
 from dataclasses import asdict, dataclass
 
-
-from application.course.answer import CreateAnswerCommand
-from application.course.question import CreateQuestionCommand
 from src.domain.course.entities import Test
 from src.domain.course.protocols import TestRepo
 
@@ -23,12 +20,12 @@ class CreateTestCommand:
         test = Test.create(identity, dto.name, dto.min_score, dto.time_limit)
         await self.test_repo.add(test)
         return identity
-    
+
 
 @dataclass
 class UpdateTestDto(TestDto):
     id: str
-    
+
 
 @dataclass
 class UpdateTestCommand:

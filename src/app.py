@@ -5,6 +5,7 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from src.application.course import CourseCommandsProvider
 from src.application.article import ArticleCommandsProvider
 from src.infra.database import DBSessionProvider, ReadersProvider, SqlProvider
 from src.infra.s3 import S3Provider
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
         SqlProvider(),
         S3Provider(settings),
         ArticleCommandsProvider(),
+        CourseCommandsProvider(),
         ReadersProvider(),
     )
     setup_dishka(container, app)
