@@ -46,7 +46,7 @@ class UpdateCourseDto(CreateCourseDto):
 
 
 @dataclass
-class UpdateCourseDto(BaseCourseCommand):
+class UpdateCourseCommand(BaseCourseCommand):
     async def __call__(self, dto: UpdateCourseDto) -> None:
         course = await self.course_repo.get(dto.id)
         await self.check_image(dto.preview)

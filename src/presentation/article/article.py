@@ -14,7 +14,14 @@ from src.application.article.article import (
     UpdateArticleDto,
 )
 from src.infra.database.reader import ArticleReader
-from src.presentation.base import APIModelConfig, ApiInputModelConfig, ModelResponse, PaginatedListResponse, SuccessResponse, check_found
+from src.presentation.base import (
+    APIModelConfig,
+    ApiInputModelConfig,
+    ModelResponse,
+    PaginatedListResponse,
+    SuccessResponse,
+    check_found,
+)
 
 router = APIRouter(route_class=DishkaRoute)
 
@@ -24,7 +31,7 @@ class FilterParams(BaseModel):
     offset: int = Field(0, ge=0)
     order_by: Literal["pub_date", "-pub_date", "views", "-views"] = "pub_date"
     filter: str = ""
-    
+
 
 class ArticleResponse(BaseModel):
     id: UUID
@@ -49,7 +56,11 @@ async def get_articles_list(
         filter_query.filter,
         filter_query.order_by,
     )
-    return {"items": result, "page": filter_query.offset + 1, "per_page": filter_query.limit}
+    return {
+        "items": result,
+        "page": filter_query.offset + 1,
+        "per_page": filter_query.limit,
+    }
 
 
 ArticleModelResponse = ModelResponse[ArticleResponse]

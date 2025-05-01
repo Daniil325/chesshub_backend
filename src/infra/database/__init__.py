@@ -1,4 +1,5 @@
 from typing import AsyncIterable
+
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,8 +10,8 @@ from src.domain.article.protocols import (
     CategoryRepo,
     TagRepo,
 )
-from src.infra.database.models.base import article_table
-from src.infra.database.reader import ArticleReader, CategoryReader, TagReader
+from src.domain.course.protocols import AnswerRepo, CourseRepo, LessonRepo, QuestionRepo, TestRepo
+from src.infra.database.reader import ArticleReader, CategoryReader, CourseReader, LessonReader, TagReader, TestReader
 from src.infra.database.repositories.article import (
     SqlArticleReactionRepo,
     SqlArticleRepo,
@@ -18,6 +19,7 @@ from src.infra.database.repositories.article import (
     SqlCategoryRepo,
     SqlTagRepo,
 )
+from src.infra.database.repositories.course import SqlAnswerRepo, SqlCourseRepo, SqlLessonRepo, SqlQuestionRepo, SqlTestRepo
 from src.infra.database.session import DBSession
 
 
@@ -63,6 +65,26 @@ class SqlProvider(Provider):
     @provide
     def get_article_reaction_repo(self, session: AsyncSession) -> ArticleReactionRepo:
         return SqlArticleReactionRepo(session)
+    
+    @provide
+    def get_course_repo(self, session: AsyncSession) -> CourseRepo:
+        return SqlCourseRepo(session)
+    
+    @provide
+    def get_test_repo(self, session: AsyncSession) -> TestRepo:
+        return SqlTestRepo(session)
+    
+    @provide
+    def get_lesson_repo(self, session: AsyncSession) -> LessonRepo:
+        return SqlLessonRepo(session)
+    
+    @provide
+    def get_question_repo(self, session: AsyncSession) -> QuestionRepo:
+        return SqlQuestionRepo(session)
+    
+    @provide
+    def get_answer_repo(self, session: AsyncSession) -> AnswerRepo:
+        return SqlAnswerRepo(session)
 
 
 class ReadersProvider(Provider):
@@ -82,3 +104,15 @@ class ReadersProvider(Provider):
     @provide
     def get_tag_reader(self, session: AsyncSession) -> TagReader:
         return TagReader(session)
+    
+    @provide
+    def get_course_reader(self, session: AsyncSession) -> CourseReader:
+        return CourseReader(session)
+    
+    @provide
+    def get_lesson_reader(self, session: AsyncSession) -> LessonReader:
+        return LessonReader(session)
+    
+    @provide
+    def get_test_reader(self, session: AsyncSession) -> TestReader:
+        return TestReader(session)

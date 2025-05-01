@@ -89,8 +89,8 @@ test_table = Table(
     metadata,
     Column("id", Uuid, primary_key=True),
     Column("name", String, nullable=False),
-    Column("min_score", JSON),
-    Column("time_limit", Uuid, ForeignKey("course.id")),
+    Column("min_score", Integer, nullable=True),
+    Column("time_limit", Integer, nullable=True),
 )
 
 lesson_table = Table(
