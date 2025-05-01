@@ -23,8 +23,11 @@ class CreateTestCommand:
 
 
 @dataclass
-class UpdateTestDto(TestDto):
+class UpdateTestDto:
     id: str
+    name: str
+    min_score: int = 0
+    time_limit: int = 0
 
 
 @dataclass

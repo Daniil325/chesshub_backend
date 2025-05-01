@@ -38,8 +38,11 @@ class CreateLessonCommand(BaseCommand):
     
 
 @dataclass
-class UpdateLessonDto(CreateLessonDto):
+class UpdateLessonDto:
     id: str
+    name: str
+    course_id: str
+    content: dict[str, Any]
     
     
 @dataclass
