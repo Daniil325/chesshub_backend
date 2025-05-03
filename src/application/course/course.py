@@ -34,7 +34,12 @@ class CreateCourseCommand(BaseCourseCommand):
         identity = self.course_repo.new_id()
         await self.check_image(dto.preview)
         course = Course.create(
-            identity, dto.name, dto.description, dto.author_id, dto.preview, dto.price
+            identity,
+            name=dto.name,
+            description=dto.description,
+            author_id=dto.author_id,
+            preview=dto.preview,
+            price=dto.price,
         )
         await self.course_repo.add(course)
         return identity
@@ -59,12 +64,12 @@ class UpdateCourseCommand(BaseCourseCommand):
         course.price = dto.price
         course.preview = dto.preview
         await self.course_repo.update(dto.id, asdict(course))
-        
-        
+
+
 @dataclass
 class DeleteCourseCommand:
     course_repo: CourseRepo
-    
+
     async def __call__(self, course_id: str) -> str:
         await self.course_repo.delete(course_id)
         return course_id

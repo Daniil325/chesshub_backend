@@ -3,9 +3,9 @@ from itertools import groupby
 from uuid import UUID
 
 from sqlalchemy import Table, select
-from sqlalchemy.orm import subqueryload, selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.domain.user.entities import User
 from src.domain.course.entities import Answer, Course, Lesson, Question, Test
 from src.domain.article.entities import Article, Category, Tag
 from src.infra.database.filters import SqlAlchemyBuilder
@@ -16,6 +16,7 @@ from src.infra.database.models.base import (
     course_table,
     lesson_table,
     test_table,
+    user_table
 )
 
 
@@ -68,17 +69,33 @@ class ArticleReader(BaseReader):
         item = (await self.session.execute(self.stmt)).all()
         if item:
             return self.parse_item(item[0])
-        print("ddddd", item)
         return None
 
     async def fetch_list_by_article(self, page, per_page, filter, order): ...
 
 
 class CourseReader(BaseReader):
-    stmt = select(Course)
+    stmt = select(Course, User).join(User)
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, course_table, Course)
+        
+    @staticmethod
+    def parse_item(item):
+        course_dict = asdict(item[0])
+        course_dict["author_username"] = item[1].username
+        return course_dict
+    
+    @staticmethod
+    def parse_item_detail(items):
+        course = asdict(items[0][0])
+        lessons = []
+        for it in items:
+            tmp = it[1]
+            lessons.append(asdict(tmp))
+        course["lessons"] = lessons
+        return course
+        
 
     async def fetch_list(
         self,
@@ -96,7 +113,8 @@ class CourseReader(BaseReader):
     async def fetch_by_id(self, id: UUID):
         self.stmt = select(Course, Lesson).join(Lesson).where(Course.id == id)
         result = (await self.session.execute(self.stmt)).all()
-        return result
+        print(result)
+        return self.parse_item_detail(result)
 
 
 class LessonReader(BaseReader):
@@ -113,11 +131,9 @@ class LessonReader(BaseReader):
         order_by: str,
     ) -> list[Lesson]:
         self.stmt = self.filter_builder(filter, order_by)
-        # убрать limit offset
-        self.stmt = self.stmt.limit(per_page).offset(page * per_page)
-        items = (await self.session.execute(self.stmt)).all()
-        result = [self.parse_item(item) for item in items]
-        return result
+        items = (await self.session.execute(self.stmt)).scalars().all()
+        # result = [self.parse_item(item) for item in items]
+        return items
 
     async def fetch_by_id(self, id: UUID):
         self.stmt = select(Lesson, Test).join(Test).where(Lesson.id == id)
@@ -178,3 +194,10 @@ class TagReader(BaseReader):
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, tag_table, Tag)
+        
+        
+class UserReader(BaseReader):
+    stmt = select(User)
+    
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session, user_table, User)

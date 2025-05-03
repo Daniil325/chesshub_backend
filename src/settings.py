@@ -1,16 +1,28 @@
 import os
+from pathlib import Path
 from pydantic_settings import BaseSettings
-from pydantic import Extra, PostgresDsn
+from pydantic import BaseModel, Extra, PostgresDsn
 
 import yaml
 from src.infra.s3.minio import S3StorageSettings
+
+BASE_DIR = Path(__file__).parent.parent
+
+
+class AuthJWT(BaseModel):
+    private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    algorithm: str = "RS256"
+    
+    access_token_expire_minutes: int = 3
 
 
 class Settings(BaseSettings):
     dev_mode: bool = False
     pg_dsn: PostgresDsn = "postgresql+asyncpg://user:password@db:5432/chesshub_db"
     storage: S3StorageSettings | None = None
-    
+    auth_jwt: AuthJWT = AuthJWT()
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

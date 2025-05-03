@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Any
+from uuid import UUID
 
 from src.domain.course.entities import Lesson
 from src.domain.course.protocols import LessonRepo

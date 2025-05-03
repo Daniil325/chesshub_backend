@@ -5,7 +5,7 @@ POSTGRES_HOST: localhost
 POSTGRES_PORT: 5432
 
 storage:
-  endpoint: 127.0.0.1:9000
+  endpoint: minio:9000
   access_key: minio
   secret_key: minio123
   secure: no

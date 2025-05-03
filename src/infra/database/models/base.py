@@ -134,9 +134,6 @@ answer_table = Table(
 mapper_registry.map_imperatively(
     User,
     user_table,
-    properties={
-        "full_name": composite(FullUserName, user_table.c.name, user_table.c.surname)
-    },
 )
 
 mapper_registry.map_imperatively(Tag, tag_table)

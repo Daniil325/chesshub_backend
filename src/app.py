@@ -5,12 +5,15 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from src.application.user import UserProvider
+from src.infra.auth import JwtProvider
 from src.application.course import CourseCommandsProvider
 from src.application.article import ArticleCommandsProvider
 from src.infra.database import DBSessionProvider, ReadersProvider, SqlProvider
 from src.infra.s3 import S3Provider
 from src.presentation.article import router as article_router
 from src.presentation.course import router as course_router
+from src.presentation.user import router as user_router
 from src.settings import load_settings
 
 
@@ -24,6 +27,7 @@ def base_create_app():
     app = FastAPI(lifespan=lifespan)
     app.include_router(article_router)
     app.include_router(course_router)
+    app.include_router(user_router)
     # setup_exception_handlers(app)
     return app
 
@@ -34,7 +38,7 @@ def create_app() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -47,6 +51,9 @@ def create_app() -> FastAPI:
         ArticleCommandsProvider(),
         CourseCommandsProvider(),
         ReadersProvider(),
+        JwtProvider(settings),
+        UserProvider()
     )
+    
     setup_dishka(container, app)
     return app

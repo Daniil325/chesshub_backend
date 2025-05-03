@@ -1,4 +1,4 @@
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
@@ -52,7 +52,7 @@ async def get_article(reader: FromDishka[CourseReader], id: str = Path()):
 class CreateCourse(BaseModel):
     model_config = ApiInputModelConfig
     name: str
-    description: Json
+    description: dict[str, Any]
     author_id: str
     price: int
     preview: str | None = None
@@ -62,7 +62,7 @@ class CreateCourse(BaseModel):
 async def post_article(course: CreateCourse, cmd: FromDishka[CreateCourseCommand]):
     identity = await cmd(
         CreateCourseDto(
-            course.name, course.description, course.author_id, course.price, course.preview
+            course.name, course.description, course.author_id, course.price, course.preview, 
         )
     )
     return identity

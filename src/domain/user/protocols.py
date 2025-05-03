@@ -1,10 +1,13 @@
 from abc import ABC, abstractmethod
+from uuid import UUID
 
 from src.domain.article.entities import Article
 from .entities import User
 
 
 class UserRepo(ABC):
+    @abstractmethod
+    def new_id() -> UUID: ...
 
     @abstractmethod
     async def register(self, user: User) -> None: ...

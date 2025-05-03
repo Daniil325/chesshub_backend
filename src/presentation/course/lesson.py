@@ -1,4 +1,4 @@
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from uuid import UUID
 
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
@@ -49,13 +49,15 @@ async def get_lesson(reader: FromDishka[LessonReader], id: str = Path()):
 
 
 class CreateLesson(BaseModel):
+    course_id: str
     name: str
-    min_score: int = 0
+    content: dict[str, Any]
+    test_id: str | None = None
 
 
 @router.post("/", response_model=SuccessResponse)
 async def post_lesson(lesson: CreateLesson, cmd: FromDishka[CreateLessonCommand]):
-    identity = await cmd(CreateLessonDto(lesson.name, lesson.min_score, 0))
+    identity = await cmd(CreateLessonDto(lesson.name, lesson.course_id, lesson.content, lesson.test_id))
     return identity
 
 
