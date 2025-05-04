@@ -201,3 +201,8 @@ class UserReader(BaseReader):
     
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, user_table, User)
+
+    async def get_by_username(self, username: str) -> User | None:
+        stmt = select(User).where(User.username == username)
+        user = (await self.session.execute(stmt)).scalar_one_or_none()
+        return user

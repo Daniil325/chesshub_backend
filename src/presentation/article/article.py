@@ -84,7 +84,7 @@ class CreateArticle(BaseModel):
 async def post_article(article: CreateArticle, cmd: FromDishka[CreateArticleCommand]):
     identity = await cmd(
         CreateArticleDto(
-            article.title, article.content, article.category_id, article.preview
+            article.title, article.content, UUID("0f84ac20-ad90-4a18-8950-48a1998042ca"), article.preview
         )
     )
     return identity

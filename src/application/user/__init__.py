@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, provide
 
-from src.application.user.usecases import RegisterCommand
+from src.application.user.usecases import RegisterCommand, LoginCommand
 
 
 class UserProvider(Provider):
@@ -10,3 +10,4 @@ class UserProvider(Provider):
         super().__init__()
         
     register_command = provide(RegisterCommand)
+    login_command = provide(LoginCommand)

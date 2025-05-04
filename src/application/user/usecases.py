@@ -6,7 +6,17 @@ from src.domain.user.protocols import UserRepo
 
 
 @dataclass
-class LoginCommand: ...
+class LoginDto:
+    username: str
+    password: str
+
+@dataclass
+class LoginCommand:
+    user_repo: UserRepo
+
+    async def __call__(self, dto: LoginDto) -> User:
+        user = await self.user_repo.login_by_username(dto.username, dto.password)
+        return user
 
 
 @dataclass

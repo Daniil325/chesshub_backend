@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy import and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.article.entities import Article
@@ -15,7 +16,11 @@ class SqlUserRepo(SqlHelper, UserRepo):
     async def register(self, user: User):
         await self.add(user)
 
-    async def login_by_username(self, username: str, password: str): ...
+    async def login_by_username(self, username: str, password: str):
+        stmt = select(User).where(and_(User.username == username, User.password == password))
+        user = (await self.session.execute(stmt)).scalar_one_or_none()
+        print("aaa", user)
+        return user
 
     async def get_user_articles(self, username: str) -> list[Article]: ...
 
