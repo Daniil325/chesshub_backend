@@ -77,6 +77,6 @@ async def patch_category(
 
 
 @router.delete("/{id}", response_model=SuccessResponse)
-async def delete_tag(tag_id: str, cmd: FromDishka[DeleteCategoryCommand]):
-    await cmd(tag_id)
+async def delete_tag(id: str, cmd: FromDishka[DeleteCategoryCommand]):
+    await cmd(id)
     return SuccessResponse()

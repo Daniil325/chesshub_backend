@@ -10,6 +10,7 @@ from src.domain.article.protocols import (
     ArticleRepo,
     ArticleTagRepo,
     CategoryRepo,
+    CommentRepo,
     TagRepo,
 )
 from src.domain.course.protocols import (
@@ -33,6 +34,7 @@ from src.infra.database.repositories.article import (
     SqlArticleRepo,
     SqlArticleTagRepo,
     SqlCategoryRepo,
+    SqlCommentRepo,
     SqlTagRepo,
 )
 from src.infra.database.repositories.course import (
@@ -87,6 +89,10 @@ class SqlProvider(Provider):
     @provide
     def get_article_tag_repo(self, session: AsyncSession) -> ArticleTagRepo:
         return SqlArticleTagRepo(session)
+    
+    @provide
+    def get_comment_repo(self, session: AsyncSession) -> CommentRepo:
+        return SqlCommentRepo(session)
 
     @provide
     def get_article_reaction_repo(self, session: AsyncSession) -> ArticleReactionRepo:

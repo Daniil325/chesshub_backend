@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Any
 
 from src.domain.base import Entity
 
@@ -28,6 +29,7 @@ class User(Entity):
     profile_photo: str | None = None
     lichess_data: RatingData | None = None
     chesscom_data: RatingData | None = None
+    user_info: dict[str, Any] | None = None
     
     @classmethod
     def create(cls, id, name: str, surname: str, username: str, password: str, email: str, role: str = "USER"):

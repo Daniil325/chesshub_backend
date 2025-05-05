@@ -42,7 +42,7 @@ class BaseReader:
 
 
 class ArticleReader(BaseReader):
-    stmt = select(Article, Category).join(Category)
+    stmt = select(Article, Category, User).join(Category).join(User)
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, article_table, Article)
@@ -52,6 +52,7 @@ class ArticleReader(BaseReader):
         if item:
             article_dict = asdict(item[0])
             article_dict["category_name"] = item[1].name
+            article_dict["username"] = item[2].username
             return article_dict
         return item
 
@@ -201,8 +202,26 @@ class UserReader(BaseReader):
     
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, user_table, User)
+        
+    @staticmethod
+    def parse_item(items):
+        user_dict = asdict(items[0][0])
+        
+        articles = []
+        courses = []
+        
+        for i in items:
+            article_dict = asdict(i[1])
+            course_dict = asdict(i[2])
+            if article_dict not in articles:
+                articles.append(article_dict)
+            if course_dict not in courses:
+                courses.append(course_dict)
+        user_dict["articles"] = articles
+        user_dict["courses"] = courses
+        return user_dict
 
     async def get_by_username(self, username: str) -> User | None:
-        stmt = select(User).where(User.username == username)
-        user = (await self.session.execute(stmt)).scalar_one_or_none()
-        return user
+        stmt = select(User, Article, Course).join(Article).join(Course).where(User.username == username)
+        user = (await self.session.execute(stmt)).all()
+        return self.parse_item(user)

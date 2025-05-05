@@ -3,13 +3,15 @@ from uuid import UUID
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.article.protocols import ArticleRepo, ArticleTagRepo, TagRepo
+from src.domain.user.entities import User
+from src.domain.article.protocols import ArticleRepo, ArticleTagRepo, CommentRepo, TagRepo
 from src.infra.database.sqla_repo import SqlHelper
 from src.domain.article.entities import (
     Article,
     ArticleReaction,
     ArticleTag,
     Category,
+    Comment,
     Tag,
 )
 
@@ -74,3 +76,17 @@ class SqlArticleRepo(SqlHelper, ArticleRepo):
     async def get_by_author(self, author_id: str) -> list[Article]:
         stmt = select(Article).where(Article.author_id == author_id)
         return (await self.session.execute(stmt)).scalars()
+    
+    
+class SqlCommentRepo(SqlHelper, CommentRepo):
+    
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(session, Comment)
+        
+    async def get_by_article(self, article_id) -> list[Comment]:
+        stmt = select(Comment, User).join(User).where(Comment.article_id == article_id)
+        items = (await self.session.execute(stmt)).all()
+        return items
+    
+    async def post_comment(self, comment: Comment):
+        await self.add(comment)

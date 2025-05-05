@@ -17,10 +17,10 @@ from src.domain.article.entities import (
     ArticleReaction,
     ArticleTag,
     Category,
+    Comment,
     Tag,
 )
 from src.domain.user.entities import User
-from src.domain.user.value_objects import FullUserName
 
 mapper_registry = registry()
 metadata = mapper_registry.metadata
@@ -33,6 +33,7 @@ article_table = Table(
     Column("title", String, nullable=False),
     Column("content", JSON),
     Column("category_id", Uuid, ForeignKey("category.id")),
+    Column("author_id", Uuid, ForeignKey("user.id"), nullable=True),
     Column("preview", String),
     Column("pub_date", DateTime, nullable=False),
     Column("views", Integer, nullable=False, default=0),
@@ -80,6 +81,7 @@ user_table = Table(
     Column("lichess_data", JSON),
     Column("chesscom_data", JSON),
     Column("role", String, nullable=False),
+    Column("user_info", JSON, nullable=True),
 )
 
 course_table = Table(
@@ -128,6 +130,15 @@ answer_table = Table(
     Column("text", String, nullable=False),
     Column("question_id", Uuid, ForeignKey("question.id"), nullable=True),
     Column("is_right", Boolean),
+)
+
+comment_table = Table(
+    "comment",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("text", String, nullable=False),
+    Column("author_id", Uuid, ForeignKey("user.id"), nullable=True),
+    Column("article_id", Uuid, ForeignKey("article.id"), primary_key=True),
 )
 
 
@@ -184,3 +195,5 @@ mapper_registry.map_imperatively(
     answer_table,
     properties={"answers": relationship(Question, back_populates="question")},
 )
+
+mapper_registry.map_imperatively(Comment, comment_table)

@@ -26,6 +26,7 @@ class Article(Entity):
     title: str
     content: dict[str, Any]
     category_id: str
+    author_id: str
     preview: str | None = None
     pub_date: datetime = field(default_factory=datetime_factory)
     views: int = 0
@@ -37,13 +38,15 @@ class Article(Entity):
         title: str,
         content: dict[str, Any],
         category_id: str,
+        author_id: str,
         preview: str | None = None,
     ) -> Self:
-        inst = cls(id, title, content, category_id, preview)
+        inst = cls(id, title, content, category_id, author_id, preview)
         inst.title = title
         inst.content = content
         inst.category_id = category_id
         inst.preview = preview
+        inst.author_id = author_id
         inst.views = 0
         inst.pub_date = datetime.utcnow()
         return inst
@@ -95,4 +98,16 @@ class ArticleReaction(Entity):
     def create(cls, id: str, article_id: str, reaction: Reaction) -> Self:
         inst = cls(article_id, reaction)
         inst.id = id
+        return inst
+    
+    
+@dataclass
+class Comment(Entity):
+    author_id: str
+    article_id: str
+    text: str
+    
+    @classmethod
+    def create(cls, id: str, author_id: str, article_id: str, text: str):
+        inst = cls(id, author_id, article_id, text)
         return inst

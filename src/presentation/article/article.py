@@ -6,10 +6,13 @@ from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Path, Query
 from pydantic import BaseModel, Field, Json
 
+from src.application.article.image import CreateImageCommand
 from src.application.article.article import (
+    CommentDto,
     CreateArticleCommand,
     CreateArticleDto,
     DeleteArticleCommand,
+    PostCommentCommand,
     UpdateArticleCommand,
     UpdateArticleDto,
 )
@@ -43,6 +46,7 @@ class ArticleResponse(BaseModel):
     views: int = 0
     category_id: UUID
     category_name: str
+    username: str
     model_config = APIModelConfig
 
 
@@ -77,6 +81,7 @@ class CreateArticle(BaseModel):
     title: str
     content: dict[str, Any]
     category_id: str
+    author_id: str
     preview: str | None = None
 
 
@@ -84,7 +89,11 @@ class CreateArticle(BaseModel):
 async def post_article(article: CreateArticle, cmd: FromDishka[CreateArticleCommand]):
     identity = await cmd(
         CreateArticleDto(
-            article.title, article.content, UUID("0f84ac20-ad90-4a18-8950-48a1998042ca"), article.preview
+            article.title,
+            article.content,
+            UUID("29abbf0a-f14a-47ff-93d4-ca05d79283c5"),
+            article.author_id,
+            article.preview,
         )
     )
     return identity
@@ -110,3 +119,15 @@ async def update_article(
 async def delete_article(cmd: FromDishka[DeleteArticleCommand], id: UUID = Path(...)):
     await cmd(id)
     return SuccessResponse()
+
+
+class PostComment(BaseModel):
+    author_id: str
+    article_id: str
+    text: str
+
+
+@router.post("/comment/{id}", response_model=SuccessResponse)
+async def post_comment(cmd: FromDishka[PostCommentCommand], comment: PostComment, id: UUID = Path(...), ):
+    identity = await cmd(CommentDto(comment.article_id, comment.author_id, comment.text))
+    return identity

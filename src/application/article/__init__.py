@@ -13,6 +13,7 @@ from src.application.article.tag import (
 )
 from src.application.article.article import (
     CreateArticleCommand,
+    PostCommentCommand,
     UpdateArticleCommand,
     DeleteArticleCommand,
 )
@@ -55,3 +56,4 @@ class ArticleCommandsProvider(Provider):
     delete_article_reaction_command = provide(DeleteArticleReactionCommand)
 
     create_image_command = provide(CreateImageCommand)
+    post_comment_command = provide(PostCommentCommand)
