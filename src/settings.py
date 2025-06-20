@@ -19,7 +19,7 @@ class AuthJWT(BaseModel):
 
 class Settings(BaseSettings):
     dev_mode: bool = False
-    pg_dsn: PostgresDsn = "postgresql+asyncpg://user:password@db:5432/chesshub_db"
+    pg_dsn: PostgresDsn = "postgresql+asyncpg://user:password@localhost:5252/chesshub_db"
     storage: S3StorageSettings | None = None
     auth_jwt: AuthJWT = AuthJWT()
 

@@ -1,0 +1,34 @@
+@startuml packages_yourpackage
+set namespaceSeparator none
+package "domain" as domain {
+}
+package "domain.article" as domain.article {
+}
+package "domain.article.entities" as domain.article.entities {
+}
+package "domain.article.protocols" as domain.article.protocols {
+}
+package "domain.base" as domain.base {
+}
+package "domain.course" as domain.course {
+}
+package "domain.course.entities" as domain.course.entities {
+}
+package "domain.course.protocols" as domain.course.protocols {
+}
+package "domain.exceptions" as domain.exceptions {
+}
+package "domain.user" as domain.user {
+}
+package "domain.user.entities" as domain.user.entities {
+}
+package "domain.user.exceptions" as domain.user.exceptions {
+}
+package "domain.user.protocols" as domain.user.protocols {
+}
+package "domain.user.value_objects" as domain.user.value_objects {
+}
+package "domain.vacancy" as domain.vacancy {
+}
+domain.user.protocols --> domain.user.entities
+@enduml

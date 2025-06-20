@@ -1,0 +1,302 @@
+@startuml classes_yourpackage
+set namespaceSeparator none
+class "ArticleCommandsProvider" as application.article.ArticleCommandsProvider {
+  create_article_command : CompositeDependencySource, NoneType
+  create_article_reaction_command : CompositeDependencySource, NoneType
+  create_article_tag_command : CompositeDependencySource, NoneType
+  create_category_command : CompositeDependencySource, NoneType
+  create_image_command : CompositeDependencySource, NoneType
+  create_tag_command : CompositeDependencySource, NoneType
+  delete_article_command : CompositeDependencySource, NoneType
+  delete_article_reaction_command : CompositeDependencySource, NoneType
+  delete_article_tag_command : CompositeDependencySource, NoneType
+  delete_category_command : CompositeDependencySource, NoneType
+  delete_tag_command : CompositeDependencySource, NoneType
+  post_comment_command : CompositeDependencySource, NoneType
+  scope : REQUEST
+  update_article_command : CompositeDependencySource, NoneType
+  update_article_reaction_command : CompositeDependencySource, NoneType
+  update_article_tag_command : CompositeDependencySource, NoneType
+  update_category_command : CompositeDependencySource, NoneType
+  update_tag_command : CompositeDependencySource, NoneType
+}
+class "BaseArticleCommand" as application.article.article.BaseArticleCommand {
+  article_repo
+  storage_repo
+  check_image(image_id: str | None)
+}
+class "BaseCommand" as application.course.lesson.BaseCommand {
+  lesson_repo
+  storage_repo
+  check_image(image_id: str | None)
+}
+class "BaseCourseCommand" as application.course.course.BaseCourseCommand {
+  course_repo
+  storage_repo
+  check_image(image_id: str | None)
+}
+class "CommentDto" as application.article.article.CommentDto {
+  article_id : str
+  author_id : str
+  text : str
+}
+class "CourseCommandsProvider" as application.course.CourseCommandsProvider {
+  create_answer_command : CompositeDependencySource, NoneType
+  create_course_command : CompositeDependencySource, NoneType
+  create_lesson_command : CompositeDependencySource, NoneType
+  create_question_command : CompositeDependencySource, NoneType
+  create_test_command : CompositeDependencySource, NoneType
+  delete_answer_command : CompositeDependencySource, NoneType
+  delete_course_command : CompositeDependencySource, NoneType
+  delete_lesson_command : CompositeDependencySource, NoneType
+  delete_question_command : CompositeDependencySource, NoneType
+  delete_test_command : CompositeDependencySource, NoneType
+  scope : REQUEST
+  update_answer_command : CompositeDependencySource, NoneType
+  update_course_command : CompositeDependencySource, NoneType
+  update_lesson_command : CompositeDependencySource, NoneType
+  update_question_command : CompositeDependencySource, NoneType
+  update_test_command : CompositeDependencySource, NoneType
+}
+class "CreateAnswerCommand" as application.course.answer.CreateAnswerCommand {
+  answer_repo
+}
+class "CreateAnswerDto" as application.course.answer.CreateAnswerDto {
+  is_right : bool
+  question_id : str
+  text : str
+}
+class "CreateArticleCommand" as application.article.article.CreateArticleCommand {
+}
+class "CreateArticleDto" as application.article.article.CreateArticleDto {
+  author_id : str
+  category_id : str
+  content : dict[str, Any]
+  preview : str | None
+  title : str
+}
+class "CreateArticleReactionCommand" as application.article.article_reaction.CreateArticleReactionCommand {
+  article_reaction_repo
+}
+class "CreateArticleReactionDto" as application.article.article_reaction.CreateArticleReactionDto {
+  article_id : str
+  reaction
+}
+class "CreateArticleTagCommand" as application.article.article_tag.CreateArticleTagCommand {
+  article_tag_repo
+}
+class "CreateArticleTagDto" as application.article.article_tag.CreateArticleTagDto {
+  article_id : str
+  tag_id : str
+}
+class "CreateCategoryCommand" as application.article.category.CreateCategoryCommand {
+  category_repo
+}
+class "CreateCategoryDto" as application.article.category.CreateCategoryDto {
+  name : str
+}
+class "CreateCourseCommand" as application.course.course.CreateCourseCommand {
+}
+class "CreateCourseDto" as application.course.course.CreateCourseDto {
+  author_id : str
+  description : dict[str, Any]
+  name : str
+  preview : str | None
+  price : int
+}
+class "CreateImageCommand" as application.article.image.CreateImageCommand {
+  allowed_content_types : ClassVar[tuple[str]]
+  storage
+}
+class "CreateImageDto" as application.article.image.CreateImageDto {
+  content_type : str
+  file : BinaryIO
+  filename : str
+  size : int
+}
+class "CreateLessonCommand" as application.course.lesson.CreateLessonCommand {
+}
+class "CreateLessonDto" as application.course.lesson.CreateLessonDto {
+  content : dict[str, Any]
+  course_id : str
+  name : str
+  test_id : str | None
+}
+class "CreateQuestionCommand" as application.course.question.CreateQuestionCommand {
+  question_repo
+}
+class "CreateQuestionDto" as application.course.question.CreateQuestionDto {
+  name : str
+  test_id : str
+}
+class "CreateTagCommand" as application.article.tag.CreateTagCommand {
+  tag_repo
+}
+class "CreateTagDto" as application.article.tag.CreateTagDto {
+  name : str
+}
+class "CreateTestCommand" as application.course.test.CreateTestCommand {
+  test_repo
+}
+class "DeleteAnswerCommand" as application.course.answer.DeleteAnswerCommand {
+  answer_repo
+}
+class "DeleteArticleCommand" as application.article.article.DeleteArticleCommand {
+  article_repo
+}
+class "DeleteArticleReactionCommand" as application.article.article_reaction.DeleteArticleReactionCommand {
+  article_reaction_repo
+}
+class "DeleteArticleTagCommand" as application.article.article_tag.DeleteArticleTagCommand {
+  article_tag_repo
+}
+class "DeleteCategoryCommand" as application.article.category.DeleteCategoryCommand {
+  category_repo
+}
+class "DeleteCourseCommand" as application.course.course.DeleteCourseCommand {
+  course_repo
+}
+class "DeleteLessonCommand" as application.course.lesson.DeleteLessonCommand {
+  lesson_repo
+}
+class "DeleteQuestionCommand" as application.course.question.DeleteQuestionCommand {
+  question_repo
+}
+class "DeleteTagCommand" as application.article.tag.DeleteTagCommand {
+  tag_repo
+}
+class "DeleteTestCommand" as application.course.test.DeleteTestCommand {
+  test_repo
+}
+class "LoginCommand" as application.user.usecases.LoginCommand {
+  user_repo
+}
+class "LoginDto" as application.user.usecases.LoginDto {
+  password : str
+  username : str
+}
+class "LogoutCommand" as application.user.usecases.LogoutCommand {
+}
+class "PostCommentCommand" as application.article.article.PostCommentCommand {
+  comment_repo
+}
+class "ProfileDto" as application.user.usecases.ProfileDto {
+  email : str
+  name : str
+  password : str
+  surname : str
+  user_info : dict[str, Any]
+  username : str
+}
+class "RegisterCommand" as application.user.usecases.RegisterCommand {
+  password_manager
+  user_repo
+}
+class "RegisterUserDto" as application.user.usecases.RegisterUserDto {
+  email : str
+  name : str
+  password : str
+  surname : str
+  username : str
+}
+class "TestDto" as application.course.test.TestDto {
+  min_score : int
+  name : str
+  time_limit : int
+}
+class "UpdateAnswerCommand" as application.course.answer.UpdateAnswerCommand {
+  answer_repo
+}
+class "UpdateAnswerDto" as application.course.answer.UpdateAnswerDto {
+  id : str
+  is_right : bool
+  text : str
+}
+class "UpdateArticleCommand" as application.article.article.UpdateArticleCommand {
+}
+class "UpdateArticleDto" as application.article.article.UpdateArticleDto {
+  article_id : str
+  category_id : str
+  content : dict[str, Any]
+  preview : str | None
+  title : str
+}
+class "UpdateArticleReactionCommand" as application.article.article_reaction.UpdateArticleReactionCommand {
+  article_reaction_repo
+}
+class "UpdateArticleReactionDto" as application.article.article_reaction.UpdateArticleReactionDto {
+  id : str
+  reaction
+}
+class "UpdateArticleTagCommand" as application.article.article_tag.UpdateArticleTagCommand {
+  article_tag_repo
+}
+class "UpdateArticleTagDto" as application.article.article_tag.UpdateArticleTagDto {
+  new_article_id : str
+  new_tag_id : str
+  old_article_id : str
+  old_tag_id : str
+}
+class "UpdateCategoryCommand" as application.article.category.UpdateCategoryCommand {
+  category_repo
+}
+class "UpdateCategoryDto" as application.article.category.UpdateCategoryDto {
+  category_id : str
+  name : str
+}
+class "UpdateCourseCommand" as application.course.course.UpdateCourseCommand {
+}
+class "UpdateCourseDto" as application.course.course.UpdateCourseDto {
+  description : dict[str, Any]
+  id : str
+  name : str
+  preview : str | None
+  price : int
+}
+class "UpdateLessonCommand" as application.course.lesson.UpdateLessonCommand {
+}
+class "UpdateLessonDto" as application.course.lesson.UpdateLessonDto {
+  content : dict[str, Any]
+  course_id : str
+  id : str
+  name : str
+}
+class "UpdateProfileCommand" as application.user.usecases.UpdateProfileCommand {
+  user_repo
+}
+class "UpdateQuestionCommand" as application.course.question.UpdateQuestionCommand {
+  question_repo
+}
+class "UpdateQuestionDto" as application.course.question.UpdateQuestionDto {
+  id : str
+  name : str
+}
+class "UpdateTagCommand" as application.article.tag.UpdateTagCommand {
+  tag_repo
+}
+class "UpdateTagDto" as application.article.tag.UpdateTagDto {
+  name : str
+  tag_id : str
+}
+class "UpdateTestCommand" as application.course.test.UpdateTestCommand {
+  test_repo
+}
+class "UpdateTestDto" as application.course.test.UpdateTestDto {
+  id : str
+  min_score : int
+  name : str
+  time_limit : int
+}
+class "UserProvider" as application.user.UserProvider {
+  login_command : CompositeDependencySource, NoneType
+  register_command : CompositeDependencySource, NoneType
+  scope : REQUEST
+  update_profile_command : CompositeDependencySource, NoneType
+}
+application.article.article.CreateArticleCommand --|> application.article.article.BaseArticleCommand
+application.article.article.UpdateArticleCommand --|> application.article.article.BaseArticleCommand
+application.course.course.CreateCourseCommand --|> application.course.course.BaseCourseCommand
+application.course.course.UpdateCourseCommand --|> application.course.course.BaseCourseCommand
+application.course.lesson.CreateLessonCommand --|> application.course.lesson.BaseCommand
+application.course.lesson.UpdateLessonCommand --|> application.course.lesson.BaseCommand
+@enduml

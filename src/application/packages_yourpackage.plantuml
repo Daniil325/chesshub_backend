@@ -1,0 +1,35 @@
+@startuml packages_yourpackage
+set namespaceSeparator none
+package "application" as application {
+}
+package "application.article" as application.article {
+}
+package "application.article.article" as application.article.article {
+}
+package "application.article.article_reaction" as application.article.article_reaction {
+}
+package "application.article.article_tag" as application.article.article_tag {
+}
+package "application.article.category" as application.article.category {
+}
+package "application.article.image" as application.article.image {
+}
+package "application.article.tag" as application.article.tag {
+}
+package "application.course" as application.course {
+}
+package "application.course.answer" as application.course.answer {
+}
+package "application.course.course" as application.course.course {
+}
+package "application.course.lesson" as application.course.lesson {
+}
+package "application.course.question" as application.course.question {
+}
+package "application.course.test" as application.course.test {
+}
+package "application.user" as application.user {
+}
+package "application.user.usecases" as application.user.usecases {
+}
+@enduml

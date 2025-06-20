@@ -5,7 +5,13 @@ from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Path, Query
 from pydantic import BaseModel, Field, Json
 
-from src.application.course.course import CreateCourseCommand, CreateCourseDto, DeleteCourseCommand, UpdateCourseCommand, UpdateCourseDto
+from src.application.course.course import (
+    CreateCourseCommand,
+    CreateCourseDto,
+    DeleteCourseCommand,
+    UpdateCourseCommand,
+    UpdateCourseDto,
+)
 from src.infra.database.reader import CourseReader
 from src.presentation.base import (
     APIModelConfig,
@@ -41,8 +47,8 @@ async def get_courses_list(
         "page": filter_query.offset + 1,
         "per_page": filter_query.limit,
     }
-    
-    
+
+
 @router.get("/{id}")
 async def get_article(reader: FromDishka[CourseReader], id: str = Path()):
     item = check_found(await reader.fetch_by_id(id))
@@ -52,6 +58,7 @@ async def get_article(reader: FromDishka[CourseReader], id: str = Path()):
 class CreateCourse(BaseModel):
     model_config = ApiInputModelConfig
     name: str
+    subtitle: str
     description: dict[str, Any]
     author_id: str
     price: int
@@ -62,11 +69,15 @@ class CreateCourse(BaseModel):
 async def post_article(course: CreateCourse, cmd: FromDishka[CreateCourseCommand]):
     identity = await cmd(
         CreateCourseDto(
-            course.name, course.description, course.author_id, course.price, course.preview, 
+            course.name,
+            course.subtitle,
+            course.description,
+            course.author_id,
+            course.price,
+            course.preview,
         )
     )
     return identity
-
 
 
 class UpdateArticle(BaseModel):

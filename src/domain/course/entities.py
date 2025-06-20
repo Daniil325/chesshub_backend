@@ -8,6 +8,7 @@ from src.domain.base import Entity, datetime_factory
 @dataclass
 class Course(Entity):
     name: str
+    subtitle: str
     description: dict[str, Any]
     author_id: str
     preview: str | None = None
@@ -19,13 +20,15 @@ class Course(Entity):
         cls,
         id: str,
         name: str,
+        subtitle: str,
         description: dict[str, Any],
         author_id: str,
         price: int = 0,
         preview: str | None = None
     ) -> Self:
-        inst = cls(id, name, description, author_id, preview, price)
+        inst = cls(id, name, subtitle, description, author_id, preview, price)
         inst.name = name
+        inst.subtitle = subtitle
         inst.description = description
         inst.author_id = author_id
         inst.preview = preview

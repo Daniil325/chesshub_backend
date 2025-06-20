@@ -1,0 +1,269 @@
+@startuml classes_yourpackage2
+set namespaceSeparator none
+class "ApiUse" as infra.integrations.api_baseclass.ApiUse {
+  {abstract}parse()
+  urls_check(url: str) -> dict
+}
+class "<color:red>AppError</color>" as infra.exceptions.AppError {
+}
+class "ArticleReader" as infra.database.reader.ArticleReader {
+  stmt
+  fetch_by_id(id: str)
+  fetch_list(page: int, per_page: int, filter: str, order_by: str) -> list[Article]
+  fetch_list_by_article(page, per_page, filter, order)
+  parse_item(item)
+}
+class "BaseReader" as infra.database.reader.BaseReader {
+  filter_builder
+  model
+  session : AsyncSession
+  stmt : NoneType
+  table : Table
+  fetch_by_id(id: str)
+  fetch_list(page: int, per_page: int, filter: str, order_by: str)
+}
+class "BoolFilterType" as infra.database.filters.BoolFilterType {
+  operators : set
+  validate(value: Any) -> Any
+}
+class "CategoryReader" as infra.database.reader.CategoryReader {
+  stmt : NoneType
+}
+class "Chesscom" as infra.integrations.api.Chesscom {
+  json_result() -> dict
+  parse() -> ChesscomData
+}
+class "ChesscomData" as infra.integrations.api_dataclasses.ChesscomData {
+  chess_blitz : int | None
+  chess_bullet : int | None
+  chess_rapid : int | None
+}
+class "CourseReader" as infra.database.reader.CourseReader {
+  stmt
+  fetch_by_id(id: UUID)
+  fetch_list(page: int, per_page: int, filter: str, order_by: str) -> list[Course]
+  parse_item(item)
+  parse_item_detail(items)
+}
+class "DBSession" as infra.database.session.DBSession {
+  engine : AsyncEngine
+  sessionmaker : async_sessionmaker
+  async_pg_url(pg_user: str, pg_password: str, pg_host: str, pg_port: str, pg_db: str) -> str
+  close()
+  get_session() -> AsyncSession
+}
+class "DBSessionProvider" as infra.database.DBSessionProvider {
+  scope : REQUEST
+  settings
+  get_db() -> DBSession
+  get_session(db: DBSession) -> AsyncIterable[AsyncSession]
+}
+class "DataTimeFilter" as infra.database.filters.DataTimeFilter {
+  format : str | None
+  operators
+  validate(value: Any) -> Any
+}
+class "<color:red>FieldNotFound</color>" as infra.exceptions.FieldNotFound {
+}
+class "FilterLogic" as infra.database.filters.FilterLogic {
+  filters : list['Filter']
+  operator
+}
+class "FilterType" as infra.database.filters.FilterType {
+  operators : ClassVar[set[Operator]]
+  {abstract}validate(value: Any) -> Any
+}
+class "ImageDescr" as infra.s3.minio.ImageDescr {
+  created_at : datetime
+  name : str
+  size : int
+  url : str
+}
+class "ImageInfo" as infra.s3.minio.ImageInfo {
+  content_type : str
+  height : int
+  width : int
+}
+class "IntFilterType" as infra.database.filters.IntFilterType {
+  operators
+  prepare_value(value: Any) -> Any
+}
+class "JWTService" as infra.auth.jwt.JWTService {
+  algorithm : str
+  expire_minutes
+  private_key
+  public_key
+  settings
+  decode_jwt(token: str | bytes) -> dict
+  encode(payload: dict[str, Any])
+}
+class "JwtProvider" as infra.auth.JwtProvider {
+  scope : REQUEST
+  settings
+  get_jwt_service() -> JWTService
+  get_password_manager() -> PasswordManager
+}
+class "LessonReader" as infra.database.reader.LessonReader {
+  stmt : NoneType
+  fetch_by_id(id: UUID)
+  fetch_list(page: int, per_page: int, filter: str, order_by: str) -> list[Lesson]
+}
+class "Lichess" as infra.integrations.api.Lichess {
+  json_result() -> dict
+  parse() -> LichessData
+}
+class "LichessData" as infra.integrations.api_dataclasses.LichessData {
+  blitz : int | None
+  bullet : int | None
+  classical : int | None
+  rapid : int | None
+}
+class "LogicOperator" as infra.database.filters.LogicOperator {
+  name
+}
+class "MinioImageRepo" as infra.s3.minio.MinioImageRepo {
+  base_image_url : str
+  bucket_name
+  client : Minio
+  create_new_id(filename: str) -> str
+  download(image_id: str) -> bytes
+  exists(image_id: str) -> bool
+  get(image_id: str) -> ImageDescr
+  list(prefix: str | None, start_after: str | None) -> AsyncGenerator[ImageDescr, None]
+  upload(filename: str, file: BinaryIO, size: int | None) -> str
+}
+class "Operator" as infra.database.filters.Operator {
+  name
+}
+class "Order" as infra.database.filters.Order {
+  direction
+  field : str
+}
+class "OrderDirection" as infra.database.filters.OrderDirection {
+  name
+}
+class "PasswordManager" as infra.auth.jwt.PasswordManager {
+  hash_password(password: str) -> bytes
+  validate_password(password: str, hashed_password: bytes) -> bool
+}
+class "ReadersProvider" as infra.database.ReadersProvider {
+  scope : REQUEST
+  get_article_reader(session: AsyncSession) -> ArticleReader
+  get_category_reader(session: AsyncSession) -> CategoryReader
+  get_course_reader(session: AsyncSession) -> CourseReader
+  get_lesson_reader(session: AsyncSession) -> LessonReader
+  get_tag_reader(session: AsyncSession) -> TagReader
+  get_test_reader(session: AsyncSession) -> TestReader
+  get_user_reader(session: AsyncSession) -> UserReader
+}
+class "<color:red>RepositoryError</color>" as infra.exceptions.RepositoryError {
+}
+class "S3Provider" as infra.s3.S3Provider {
+  image_storage : CompositeDependencySource
+  scope : REQUEST
+  settings
+  get_s3_storage() -> AsyncIterator[MinioImageRepo]
+  get_settings() -> Settings
+}
+class "S3Storage" as infra.protocols.S3Storage {
+  base_url : str
+  {abstract}exists(image_id: str) -> bool
+  {abstract}upload(filename: str, file: BinaryIO, size: int | None) -> str
+}
+class "S3StorageSettings" as infra.s3.minio.S3StorageSettings {
+  access_key : str | None
+  bucket_name : str
+  endpoint : str
+  region : str | None
+  secret_key : str | None
+  secure : bool
+  session_token : str | None
+}
+class "SqlAlchemyBuilder" as infra.database.filters.SqlAlchemyBuilder {
+  base_stmt
+  query_string_parser
+  sql_filter : bool, list
+  sql_sort : list
+  stack : deque
+  statement
+  table : Table
+  convert_to_sql_condition(filter: list[ValueFilter])
+  convert_to_sql_order(order: list[Order])
+  exit_filter()
+  get_db_name(table: Table, filter_name: str) -> str
+}
+class "SqlHelper" as infra.database.sqla_repo.SqlHelper {
+  T : NoneType
+  model
+  session : AsyncSession
+  add(item: T) -> None
+  delete(id: UUID) -> None
+  get(id: UUID) -> T | None
+  get_all() -> list[T]
+  new_id() -> UUID
+  update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "SqlProvider" as infra.database.SqlProvider {
+  scope : REQUEST
+  get_answer_repo(session: AsyncSession) -> AnswerRepo
+  get_article_reaction_repo(session: AsyncSession) -> ArticleReactionRepo
+  get_article_repo(session: AsyncSession) -> ArticleRepo
+  get_article_tag_repo(session: AsyncSession) -> ArticleTagRepo
+  get_category_repo(session: AsyncSession) -> CategoryRepo
+  get_comment_repo(session: AsyncSession) -> CommentRepo
+  get_content_repo(session: AsyncSession) -> TagRepo
+  get_course_repo(session: AsyncSession) -> CourseRepo
+  get_lesson_repo(session: AsyncSession) -> LessonRepo
+  get_question_repo(session: AsyncSession) -> QuestionRepo
+  get_test_repo(session: AsyncSession) -> TestRepo
+  get_user_repo(session: AsyncSession) -> UserRepo
+}
+class "StringFilterType" as infra.database.filters.StringFilterType {
+  operators
+  validate(value: Any) -> str
+}
+class "TagReader" as infra.database.reader.TagReader {
+  stmt : NoneType
+}
+class "TestReader" as infra.database.reader.TestReader {
+  stmt : NoneType
+  fetch_by_id(id: UUID)
+  grouper(item)
+  parse_item(items)
+}
+class "UserReader" as infra.database.reader.UserReader {
+  stmt : NoneType
+  get_by_username(username: str) -> User | None
+  parse_item(items)
+}
+class "ValueFilter" as infra.database.filters.ValueFilter {
+  field : str
+  operator
+  value : Any
+}
+class "WhereQuery" as infra.database.filters.WhereQuery {
+  field_pattern
+  operators : dict[str, Operator]
+  build_pagination()
+  parse_filter(left: str, right: str)
+  parse_sort(value: str)
+}
+infra.database.filters.BoolFilterType --|> infra.database.filters.FilterType
+infra.database.filters.DataTimeFilter --|> infra.database.filters.FilterType
+infra.database.filters.IntFilterType --|> infra.database.filters.FilterType
+infra.database.filters.StringFilterType --|> infra.database.filters.FilterType
+infra.database.reader.ArticleReader --|> infra.database.reader.BaseReader
+infra.database.reader.CategoryReader --|> infra.database.reader.BaseReader
+infra.database.reader.CourseReader --|> infra.database.reader.BaseReader
+infra.database.reader.LessonReader --|> infra.database.reader.BaseReader
+infra.database.reader.TagReader --|> infra.database.reader.BaseReader
+infra.database.reader.TestReader --|> infra.database.reader.BaseReader
+infra.database.reader.UserReader --|> infra.database.reader.BaseReader
+infra.exceptions.FieldNotFound --|> infra.exceptions.AppError
+infra.exceptions.RepositoryError --|> infra.exceptions.AppError
+infra.s3.minio.ImageDescr --|> infra.s3.minio.ImageInfo
+infra.database.filters.LogicOperator --* infra.database.filters.FilterLogic : operator
+infra.database.filters.Operator --* infra.database.filters.ValueFilter : operator
+infra.database.filters.OrderDirection --* infra.database.filters.Order : direction
+infra.database.filters.WhereQuery --* infra.database.filters.SqlAlchemyBuilder : query_string_parser
+@enduml

@@ -22,6 +22,7 @@ class BaseCourseCommand:
 @dataclass
 class CreateCourseDto:
     name: str
+    subtitle: str
     description: dict[str, Any]
     author_id: str
     price: int
@@ -35,11 +36,7 @@ class CreateCourseCommand(BaseCourseCommand):
         await self.check_image(dto.preview)
         course = Course.create(
             identity,
-            name=dto.name,
-            description=dto.description,
-            author_id=dto.author_id,
-            preview=dto.preview,
-            price=dto.price,
+            **asdict(dto)
         )
         await self.course_repo.add(course)
         return identity

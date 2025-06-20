@@ -89,6 +89,7 @@ course_table = Table(
     metadata,
     Column("id", Uuid, primary_key=True),
     Column("name", String, nullable=False),
+    Column("subtitle", String, nullable=True),
     Column("description", JSON),
     Column("author_id", Uuid, ForeignKey("user.id")),
     Column("preview", String),
