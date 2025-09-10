@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Any, Self
+from uuid import UUID
 
 from src.domain.base import Entity, datetime_factory
 
@@ -34,7 +35,7 @@ class Article(Entity):
     @classmethod
     def create(
         cls,
-        id: str,
+        id: UUID,
         title: str,
         content: dict[str, Any],
         category_id: str,
@@ -95,8 +96,8 @@ class ArticleReaction(Entity):
     reaction: Reaction
 
     @classmethod
-    def create(cls, id: str, article_id: str, reaction: Reaction) -> Self:
-        inst = cls(article_id, reaction)
+    def create(cls, id: UUID, article_id: str, reaction: Reaction) -> Self:
+        inst = cls(id, article_id, reaction)
         inst.id = id
         return inst
     

@@ -37,10 +37,10 @@ class RegisterCommand:
     async def __call__(self, dto: RegisterUserDto):
         user = await self.user_repo.get_user_by_username(dto.username)
         if user:
-            ...
+            return "Такой пользователь уже существует"
         identity = self.user_repo.new_id()
         password = self.password_manager.hash_password(dto.password)
-        print(password)
+        dto.password = password
         item = User.create(identity, **asdict(dto))
         await self.user_repo.register(item)
         return item

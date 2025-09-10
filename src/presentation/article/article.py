@@ -40,7 +40,6 @@ class ArticleResponse(BaseModel):
     id: UUID
     title: str
     content: dict[str, Any]
-    category_id: str
     preview: str | None = None
     pub_date: datetime
     views: int = 0

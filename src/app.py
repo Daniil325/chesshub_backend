@@ -14,6 +14,7 @@ from src.infra.s3 import S3Provider
 from src.presentation.article import router as article_router
 from src.presentation.course import router as course_router
 from src.presentation.user import router as user_router
+from src.presentation.article.ingetrations import router as ingetrations_router
 from src.settings import load_settings
 
 
@@ -28,6 +29,7 @@ def base_create_app():
     app.include_router(article_router)
     app.include_router(course_router)
     app.include_router(user_router)
+    app.include_router(ingetrations_router)
     # setup_exception_handlers(app)
     return app
 
