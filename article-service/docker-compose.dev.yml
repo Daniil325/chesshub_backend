@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  chesshub_article_db:
+    container_name: chesshub_article_db
+    image: postgres
+    environment:
+      POSTGRES_DB: chesshub_article_db
+      POSTGRES_USER: user
+      PG_PORT: 5252
+      POSTGRES_PASSWORD: password
+      PG_HOST: localhost
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5252:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  article-s3:
+    image: minio/minio:RELEASE.2023-11-20T22-40-07Z.fips
+    command: server --console-address ":9001" /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: articleminio
+      MINIO_ROOT_PASSWORD: minio123
+
+
+volumes:
+  minio_data:
+  pgdata:
+
+networks:
+  net:

@@ -9,7 +9,7 @@ from sqlalchemy import (
     Table,
     Uuid,
 )
-from sqlalchemy.orm import composite, registry, relationship
+from sqlalchemy.orm import registry, relationship
 
 from src.domain.course.entities import Answer, Course, Lesson, Question, Test
 from src.domain.article.entities import (
