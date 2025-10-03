@@ -1,0 +1,11 @@
+POSTGRES_USER: user
+POSTGRES_PASSWORD: 12345
+POSTGRES_DB: chesshub_db
+POSTGRES_HOST: localhost
+POSTGRES_PORT: 5432
+
+storage:
+  endpoint: localhost:9000
+  access_key: minio
+  secret_key: minio123
+  secure: no

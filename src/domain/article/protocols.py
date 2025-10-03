@@ -4,6 +4,7 @@ from uuid import UUID
 
 from src.domain.article.entities import (
     Article,
+    Comment,
     Tag,
     ArticleReaction,
     ArticleTag,
@@ -106,3 +107,15 @@ class ArticleRepo(ABC):
 
     @abstractmethod
     async def get_by_author(self, author_id: str) -> list[Article]: ...
+    
+    
+class CommentRepo(ABC):
+    
+    @abstractmethod
+    def new_id(self) -> str: ...
+
+    @abstractmethod
+    async def post_comment(self, comment: Comment) -> str: ...
+
+    @abstractmethod
+    async def get_by_article(self, article_id: str) -> list[Comment] | None: ...

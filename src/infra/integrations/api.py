@@ -1,6 +1,7 @@
 from api_dataclasses import LichessData, ChesscomData
 from api_baseclass import ApiUse
 
+
 class Lichess(ApiUse):
 
     def __init__(self, username: str) -> None:
@@ -15,9 +16,12 @@ class Lichess(ApiUse):
     async def parse(self) -> LichessData:
         json_dict = await self.json_result()
         for i in self._keys:
-            self._json_parse[i] = json_dict.get("perfs", dict()).get(i, dict()).get("rating", None)
+            self._json_parse[i] = (
+                json_dict.get("perfs", dict()).get(i, dict()).get("rating", None)
+            )
         return LichessData(**self._json_parse)
-    
+
+
 class Chesscom(ApiUse):
 
     def __init__(self, username: str) -> None:
@@ -28,9 +32,11 @@ class Chesscom(ApiUse):
 
     async def json_result(self) -> dict:
         return await self.urls_check(self._api_url)
-    
+
     async def parse(self) -> ChesscomData:
         json_dict = await self.json_result()
         for i in self._keys:
-            self._json_parse[i] = json_dict.get(i, dict()).get("last", dict()).get("rating", None)
+            self._json_parse[i] = (
+                json_dict.get(i, dict()).get("last", dict()).get("rating", None)
+            )
         return ChesscomData(**self._json_parse)

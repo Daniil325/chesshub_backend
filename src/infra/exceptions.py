@@ -4,3 +4,7 @@ class AppError(Exception):
 
 class RepositoryError(AppError):
     pass
+
+
+class FieldNotFound(AppError):
+    pass

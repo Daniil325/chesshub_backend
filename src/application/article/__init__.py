@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide
 
+from src.application.article.image import CreateImageCommand
 from src.application.article.category import (
     CreateCategoryCommand,
     UpdateCategoryCommand,
@@ -12,6 +13,7 @@ from src.application.article.tag import (
 )
 from src.application.article.article import (
     CreateArticleCommand,
+    PostCommentCommand,
     UpdateArticleCommand,
     DeleteArticleCommand,
 )
@@ -52,3 +54,6 @@ class ArticleCommandsProvider(Provider):
     create_article_reaction_command = provide(CreateArticleReactionCommand)
     update_article_reaction_command = provide(UpdateArticleReactionCommand)
     delete_article_reaction_command = provide(DeleteArticleReactionCommand)
+
+    create_image_command = provide(CreateImageCommand)
+    post_comment_command = provide(PostCommentCommand)
