@@ -1,0 +1,2 @@
+class FullUserNameException(Exception):
+    pass

@@ -1,0 +1,200 @@
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+    Uuid,
+)
+from sqlalchemy.orm import registry, relationship
+
+from src.domain.course.entities import Answer, Course, Lesson, Question, Test
+from src.domain.article.entities import (
+    Article,
+    ArticleReaction,
+    ArticleTag,
+    Category,
+    Comment,
+    Tag,
+)
+from src.domain.user.entities import User
+
+mapper_registry = registry()
+metadata = mapper_registry.metadata
+
+
+article_table = Table(
+    "article",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("title", String, nullable=False),
+    Column("content", JSON),
+    Column("category_id", Uuid, ForeignKey("category.id")),
+    Column("author_id", Uuid, ForeignKey("user.id"), nullable=True),
+    Column("preview", String),
+    Column("pub_date", DateTime, nullable=False),
+    Column("views", Integer, nullable=False, default=0),
+)
+
+category_table = Table(
+    "category",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+)
+
+tag_table = Table(
+    "tag",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+)
+
+article_tag_table = Table(
+    "article_tag",
+    metadata,
+    Column("article_id", Uuid, ForeignKey("article.id"), primary_key=True),
+    Column("tag_id", Uuid, ForeignKey("tag.id"), primary_key=True),
+)
+
+article_reaction_table = Table(
+    "article_reaction",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("article_id", Uuid, ForeignKey("article.id")),
+    Column("reaction", Integer, nullable=False),
+)
+
+user_table = Table(
+    "user",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("surname", String, nullable=False),
+    Column("username", String, nullable=False),
+    Column("password", String, nullable=False),
+    Column("email", String, nullable=False),
+    Column("profile_photo", String),
+    Column("lichess_data", JSON),
+    Column("chesscom_data", JSON),
+    Column("role", String, nullable=False),
+    Column("user_info", JSON, nullable=True),
+)
+
+course_table = Table(
+    "course",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("subtitle", String, nullable=True),
+    Column("description", JSON),
+    Column("author_id", Uuid, ForeignKey("user.id")),
+    Column("preview", String),
+    Column("pub_date", DateTime),
+    Column("price", Integer),
+)
+
+test_table = Table(
+    "test",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("min_score", Integer, nullable=True),
+    Column("time_limit", Integer, nullable=True),
+)
+
+lesson_table = Table(
+    "lesson",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("content", JSON),
+    Column("course_id", Uuid, ForeignKey("course.id")),
+    Column("test_id", Uuid, ForeignKey("test.id"), nullable=True),
+)
+
+question_table = Table(
+    "question",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("test_id", Uuid, ForeignKey("test.id"), nullable=True),
+)
+
+answer_table = Table(
+    "answer",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("text", String, nullable=False),
+    Column("question_id", Uuid, ForeignKey("question.id"), nullable=True),
+    Column("is_right", Boolean),
+)
+
+comment_table = Table(
+    "comment",
+    metadata,
+    Column("id", Uuid, primary_key=True),
+    Column("text", String, nullable=False),
+    Column("author_id", Uuid, ForeignKey("user.id"), nullable=True),
+    Column("article_id", Uuid, ForeignKey("article.id"), primary_key=True),
+)
+
+
+mapper_registry.map_imperatively(
+    User,
+    user_table,
+)
+
+mapper_registry.map_imperatively(Tag, tag_table)
+mapper_registry.map_imperatively(
+    Category,
+    category_table,
+    properties={"category_info": relationship(Article, back_populates="article")},
+)
+mapper_registry.map_imperatively(
+    Article,
+    article_table,
+    properties={"article": relationship(Category, back_populates="category_info")},
+)
+mapper_registry.map_imperatively(ArticleReaction, article_reaction_table)
+mapper_registry.map_imperatively(ArticleTag, article_tag_table)
+
+mapper_registry.map_imperatively(
+    Course,
+    course_table,
+    properties={"course": relationship(Lesson, back_populates="lessons")},
+)
+mapper_registry.map_imperatively(
+    Lesson,
+    lesson_table,
+    properties={
+        "lessons": relationship(Course, back_populates="course"),
+        "lesson": relationship(Test, back_populates="test"),
+    },
+)
+mapper_registry.map_imperatively(
+    Question,
+    question_table,
+    properties={
+        "question": relationship(Answer, back_populates="answers"),
+        "questions": relationship(Test, back_populates="q_test"),
+    },
+)
+mapper_registry.map_imperatively(
+    Test,
+    test_table,
+    properties={
+        "test": relationship(Lesson, back_populates="lesson"),
+        "q_test": relationship(Question, back_populates="questions"),
+    },
+)
+mapper_registry.map_imperatively(
+    Answer,
+    answer_table,
+    properties={"answers": relationship(Question, back_populates="question")},
+)
+
+mapper_registry.map_imperatively(Comment, comment_table)

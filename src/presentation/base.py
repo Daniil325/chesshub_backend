@@ -1,6 +1,8 @@
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
+from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, field_validator
 from humps import camelize
+from starlette.status import HTTP_404_NOT_FOUND
 
 
 APIModelConfig = ConfigDict(
@@ -50,3 +52,14 @@ Item = TypeVar("Item", bound=BaseModel)
 
 class ListResponse(SuccessResponse, Generic[Item]):
     items: list[Item]
+
+
+class PaginatedListResponse(ListResponse):
+    page: int
+    per_page: int
+    
+    
+def check_found(obj: Any) -> Any:
+    if obj is None:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND)
+    return obj

@@ -1,11 +1,35 @@
 version: "3.9"
 services:
-  postgres:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
+    environment:
+      - DATABASE_URL=postgresql://user:password@localhost:5432/chesshub_db
+    ports:
+      - '8000:8000'
+    restart: on-failure
+    depends_on:
+      - db
+      - minio
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /src
+        - action: rebuild
+          path: ./poetry.lock
+
+  db:
+    container_name: db
     image: postgres
     environment:
       POSTGRES_DB: chesshub_db
       POSTGRES_USER: user
+      PG_PORT: 5252
       POSTGRES_PASSWORD: password
+      PG_HOST: localhost
       PGDATA: /var/lib/postgresql/data
     ports:
       - "5252:5432"
@@ -16,6 +40,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 3
+
   minio:
     image: minio/minio:RELEASE.2023-11-20T22-40-07Z.fips
     command: server --console-address ":9001" /data
@@ -27,6 +52,7 @@ services:
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
+
 
 volumes:
   minio_data:

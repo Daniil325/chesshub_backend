@@ -1,0 +1,217 @@
+@startuml classes_yourpackage
+set namespaceSeparator none
+class "Answer" as domain.course.entities.Answer {
+  is_right : bool
+  question_id : str
+  text : str
+  create(id: str, name: str, test_id: str) -> Self
+}
+class "AnswerRepo" as domain.course.protocols.AnswerRepo {
+  {abstract}add(item: Answer) -> None
+  {abstract}delete(id: UUID) -> None
+  {abstract}get(id: UUID) -> Answer | None
+  {abstract}new_id() -> str
+  {abstract}update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "Article" as domain.article.entities.Article {
+  author_id : str
+  category_id : str
+  content : dict[str, Any]
+  preview : str | None
+  pub_date : datetime
+  title : str
+  views : int
+  create(id: str, title: str, content: dict[str, Any], category_id: str, author_id: str, preview: str | None) -> Self
+}
+class "ArticleReaction" as domain.article.entities.ArticleReaction {
+  article_id : str
+  id : str
+  reaction
+  create(id: str, article_id: str, reaction: Reaction) -> Self
+}
+class "ArticleReactionRepo" as domain.article.protocols.ArticleReactionRepo {
+  {abstract}add(article: Article) -> None
+  {abstract}delete(article_id: str) -> None
+  {abstract}get(article_id: str) -> Article | None
+  {abstract}new_id() -> str
+  {abstract}update(article_id: str, changes: dict[str, Any]) -> None
+}
+class "ArticleRepo" as domain.article.protocols.ArticleRepo {
+  {abstract}add(article: Article) -> None
+  {abstract}delete(article_id: str) -> None
+  {abstract}get(article_id: str) -> Article | None
+  {abstract}get_by_author(author_id: str) -> list[Article]
+  {abstract}get_by_category(category_id: str) -> list[Article]
+  {abstract}new_id() -> str
+  {abstract}update(article_id: str, changes: dict[str, Any]) -> None
+}
+class "ArticleTag" as domain.article.entities.ArticleTag {
+  article_id : str
+  tag_id : str
+  create(tag_id: str, article_id: str) -> Self
+}
+class "ArticleTagRepo" as domain.article.protocols.ArticleTagRepo {
+  {abstract}add(article_tag: ArticleTag) -> None
+  {abstract}delete(tag_id: str, article_id: str) -> None
+  {abstract}get(tad_id: UUID, article_id: UUID) -> ArticleTag | None
+  {abstract}new_id() -> str
+  {abstract}update(tad_id: UUID, article_id: UUID) -> None
+}
+class "BaseRepo" as domain.base.BaseRepo {
+  {abstract}add(item: T) -> None
+  {abstract}delete(id: str) -> None
+  {abstract}get(id: str) -> T | None
+  {abstract}new_id() -> str
+  {abstract}update(id: str, changes: dict[str, Any]) -> None
+}
+class "Category" as domain.article.entities.Category {
+  name : str
+  create(id: str, name: str) -> Self
+}
+class "CategoryRepo" as domain.article.protocols.CategoryRepo {
+  {abstract}add(category: Category) -> None
+  {abstract}delete(category_id: str) -> None
+  {abstract}get(category_id: str) -> Category | None
+  {abstract}new_id() -> str
+  {abstract}update(category_id: str, changes: dict[str, Any]) -> None
+}
+class "Comment" as domain.article.entities.Comment {
+  article_id : str
+  author_id : str
+  text : str
+  create(id: str, author_id: str, article_id: str, text: str)
+}
+class "CommentRepo" as domain.article.protocols.CommentRepo {
+  {abstract}get_by_article(article_id: str) -> list[Comment] | None
+  {abstract}new_id() -> str
+  {abstract}post_comment(comment: Comment) -> str
+}
+class "Course" as domain.course.entities.Course {
+  author_id : str
+  description : dict[str, Any]
+  name : str
+  preview : str | None
+  price : int
+  pub_date : datetime
+  create(id: str, name: str, description: dict[str, Any], author_id: str, price: int, preview: str | None) -> Self
+}
+class "CourseRepo" as domain.course.protocols.CourseRepo {
+  {abstract}add(item: Course) -> None
+  {abstract}delete(id: UUID) -> None
+  {abstract}get(id: UUID) -> Course | None
+  {abstract}new_id() -> str
+  {abstract}update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "<color:red>DomainError</color>" as domain.exceptions.DomainError {
+}
+class "Entity" as domain.base.Entity {
+  id : UUID
+}
+class "FullUserName" as domain.user.value_objects.FullUserName {
+  name
+  surname
+}
+class "<color:red>FullUserNameException</color>" as domain.user.exceptions.FullUserNameException {
+}
+class "Lesson" as domain.course.entities.Lesson {
+  content : dict[str, Any]
+  course_id : str
+  name : str
+  test_id : str | None
+  create(id: str, name: str, course_id: str, content: dict[str, Any], test_id: str | None)
+}
+class "LessonRepo" as domain.course.protocols.LessonRepo {
+  {abstract}add(item: Lesson) -> None
+  {abstract}delete(id: UUID) -> None
+  {abstract}get(id: UUID) -> Lesson | None
+  {abstract}new_id() -> str
+  {abstract}update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "Question" as domain.course.entities.Question {
+  name : str
+  test_id : str
+  create(id: str, name: str, test_id: str) -> Self
+}
+class "QuestionRepo" as domain.course.protocols.QuestionRepo {
+  {abstract}add(item: Question) -> None
+  {abstract}delete(id: UUID) -> None
+  {abstract}get(id: UUID) -> Question | None
+  {abstract}get_by_test(test_id: UUID) -> list[Question]
+  {abstract}new_id() -> str
+  {abstract}update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "RatingData" as domain.user.entities.RatingData {
+  blitz : int
+  bullet : int
+  classic : int
+  rapid : int
+}
+class "Reaction" as domain.article.entities.Reaction {
+  name
+}
+class "Result" as domain.course.entities.Result {
+  passing_time : datetime
+  test_id : str
+  user_id : str
+}
+class "ResultRepo" as domain.course.protocols.ResultRepo {
+  {abstract}add(item: Result) -> None
+  {abstract}delete(id: UUID) -> None
+  {abstract}get(id: UUID) -> Result | None
+  {abstract}new_id() -> str
+  {abstract}update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "Role" as domain.user.entities.Role {
+  name
+}
+class "Singleton" as domain.base.Singleton {
+  get_instance()
+}
+class "Tag" as domain.article.entities.Tag {
+  name : str
+  create(id: str, name: str) -> Self
+}
+class "TagRepo" as domain.article.protocols.TagRepo {
+  {abstract}add(tag: Tag) -> None
+  {abstract}delete(tag_id: str) -> None
+  {abstract}get(tag_id: str) -> Tag | None
+  {abstract}new_id() -> str
+  {abstract}update(tag_id: str, changes: dict[str, Any]) -> None
+}
+class "Test" as domain.course.entities.Test {
+  min_score : int
+  name : str
+  time_limit : int
+  create(id: str, name: str, min_score: int, time_limit: int)
+}
+class "TestRepo" as domain.course.protocols.TestRepo {
+  {abstract}add(item: Test) -> None
+  {abstract}delete(id: UUID) -> None
+  {abstract}get(id: UUID) -> Test | None
+  {abstract}new_id() -> str
+  {abstract}update(id: UUID, changes: dict[str, Any]) -> None
+}
+class "User" as domain.user.entities.User {
+  chesscom_data : RatingData | None
+  email : str
+  lichess_data : RatingData | None
+  name : str
+  password : str
+  profile_photo : str | None
+  role
+  surname : str
+  user_info : dict[str, Any] | None
+  username : str
+  create(id, name: str, surname: str, username: str, password: str, email: str, role: str)
+}
+class "UserRepo" as domain.user.protocols.UserRepo {
+  {abstract}change_profile(user: User) -> None
+  {abstract}get_user_articles(username: str) -> list[Article]
+  {abstract}get_user_by_username(username: str) -> User
+  {abstract}login_by_username(username: str, password: str) -> User
+  {abstract}new_id() -> UUID
+  {abstract}register(user: User) -> None
+}
+domain.article.entities.Reaction --* domain.article.entities.ArticleReaction : reaction
+domain.user.entities.Role --* domain.user.entities.User : role
+@enduml
